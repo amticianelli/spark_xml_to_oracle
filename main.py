@@ -3,7 +3,7 @@ import os
 import findspark
 import shutil
 from query import xmlToOracle
-
+ 
 
 # tornar o pyspark "importável"
 findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
