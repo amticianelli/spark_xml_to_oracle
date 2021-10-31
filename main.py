@@ -15,19 +15,20 @@ from pyspark import SparkContext, SparkConf
 from pyspark.sql.functions import explode
 from pyspark.sql.types import *
 from pyspark.sql.functions import struct
+from config.config import Config
 
 
 
 #Config variables
-xml_path = r"C:\GDrive\Adejo\SouzaCruz\xml\\"
+xml_path = Config.xml_path
 #schema_path= r"C:\GDrive\Adejo\SouzaCruz\projeto\config\nfe_schema.json"
-schema_path= r"C:\GDrive\Adejo\SouzaCruz\spark_xml_to_oracle\config\nfe_schema.json"
+schema_path= Config.schema_path
 
 # Oracle Database Connection
-jdbc_string = r'jdbc:oracle:thin:@db202110181402_high?TNS_ADMIN=C:/wallet'
-driver = 'oracle.jdbc.driver.OracleDriver'
-user = 'ADMIN'
-password='w8Z4c85_SwJQau'
+jdbc_string = Config.jdbc_string
+driver = Config.driver
+user = Config.user
+password= Config.password
 
 
 # Map all files in directory
@@ -137,7 +138,7 @@ if len(xmls_list) > 0:
   # Visao de pessoa fisica juridica
   df_sql_pessoafisjur = spark.sql(xmlToOracle.spark_pessoafisjur)
 
-
+  print('Writing the results to temp tables')
   
   # Writing the result to Oracle
   df_sql_capa \
@@ -175,6 +176,8 @@ if len(xmls_list) > 0:
         .save()
 
   print(df_sql_item.count())
+
+  print('Writing the results to SAFX tables')
 
   # Fetch the driver manager from your spark context
   driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager

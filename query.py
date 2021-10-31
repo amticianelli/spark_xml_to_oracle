@@ -35,6 +35,7 @@ class xmlToOracle:
         SELECT
         ESTAB.COD_EMPRESA AS COD_EMPRESA,
         ESTAB.COD_ESTAB AS COD_ESTAB,
+        DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DATA_FISCAL,
         '1' AS MOVTO_E_S,
         '1' AS NORM_DEV,
         'NFE' AS COD_DOCTO,
@@ -126,6 +127,7 @@ class xmlToOracle:
         (
         COD_EMPRESA,
         COD_ESTAB,
+        DATA_FISCAL,
         MOVTO_E_S,
         NORM_DEV,
         COD_DOCTO,
