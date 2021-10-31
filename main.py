@@ -19,7 +19,7 @@ from config.config import Config
 
 
 
-#Config variables
+# Config variables
 xml_path = Config.xml_path
 #schema_path= r"C:\GDrive\Adejo\SouzaCruz\projeto\config\nfe_schema.json"
 schema_path= Config.schema_path
@@ -54,11 +54,11 @@ if len(xmls_list) > 0:
 
   spark = SparkSession \
             .builder \
-            .config('spark.executor.memory', '5g') \
-            .config('spark.driver.memory','5g')  \
+            .config('spark.executor.memory', Config.spark_mem) \
+            .config('spark.driver.memory', Config.spark_mem)  \
             .config('spark.submit.deployMode','client') \
             .config('spark.yarn.queue','short') \
-            .config('spark.executor.cores',4) \
+            .config('spark.executor.cores',Config.spark_core) \
             .master('local[*]') \
             .appName("ETL_xml_to_SAFX") \
             .getOrCreate()
@@ -108,6 +108,9 @@ if len(xmls_list) > 0:
   df.write.parquet(xml_path+r'\processing\xml_processing.parquet')
   df = spark.read.parquet(xml_path+r'\processing\xml_processing.parquet')
 
+
+
+  # Returning Mastersaf DW tables
   df_estab = spark.read \
       .format("jdbc") \
       .option('driver',driver) \
@@ -118,8 +121,33 @@ if len(xmls_list) > 0:
       .option('dbtable','MSAF.ESTABELECIMENTO') \
       .load()
 
-  df_estab.createOrReplaceTempView('ESTABELECIMENTO')
+  df_cfop = spark.read \
+      .format("jdbc") \
+      .option('driver',driver) \
+      .option('url',jdbc_string) \
+      .option('user',user) \
+      .option('password',password) \
+      .option("fetchsize","500")  \
+      .option('query',xmlToOracle.oracle_param_cfop) \
+      .load()
 
+  df_ncm = spark.read \
+      .format("jdbc") \
+      .option('driver',driver) \
+      .option('url',jdbc_string) \
+      .option('user',user) \
+      .option('password',password) \
+      .option("fetchsize","500")  \
+      .option('query',xmlToOracle.oracle_param_produto) \
+      .load()
+
+
+  df_estab.createOrReplaceTempView('ESTABELECIMENTO')
+  df_cfop.createOrReplaceTempView('MSAFCFOP')
+  df_ncm.createOrReplaceTempView('MSAFNCM')
+
+
+  # Exploding itens
   df_result_item = df \
               .select(\
                   df['*'],\

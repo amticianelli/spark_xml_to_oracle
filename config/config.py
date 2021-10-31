@@ -9,3 +9,7 @@ class Config:
     driver = 'oracle.jdbc.driver.OracleDriver'
     user = 'ADMIN'
     password='w8Z4c85_SwJQau'
+
+    # Spark configurations (nao alterar)
+    spark_mem = '5g'
+    spark_core = 4
