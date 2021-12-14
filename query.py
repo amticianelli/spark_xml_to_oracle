@@ -9,24 +9,47 @@ class xmlToOracle:
             '1' AS NORM_DEV,
             'NFE' AS COD_DOCTO,
             '1' AS IDENT_FIS_JUR,
-            'M'||SUBSTR(NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(NFe.infNfe.dest.CNPJ,(-1*length(NFe.infNfe.dest.CNPJ)),4) AS COD_FIS_JUR,
-            LPAD(NFe.infNfe.ide.cNF,12,'0') AS NUM_DOCFIS,
+            CASE 
+                WHEN NFe.infNfe.avulsa.CNPJ IS NOT NULL THEN
+                    'M'||SUBSTR(NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(NFe.infNfe.dest.CNPJ,(-1*length(NFe.infNfe.dest.CNPJ)),4) 
+                ELSE
+                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,(-1*length(NFe.infNfe.emit.CNPJ)),4)
+                END AS COD_FIS_JUR,
+            LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DATA_EMISSAO,
             '1' AS COD_CLASS_DOC_FIS,
             ''||NFe.infNfe.ide.mod AS COD_MODELO,
             --''||NFe.infNfe.det[0].prod.CFOP AS COD_CFO,
-            MSAFCFOP.novo_cfo AS COD_CFO,
+            NVL(MSAFCFOP.novo_cfo,'NP') AS COD_CFO,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,1,12) AS NUM_DOCFIS_REF,
             ''||NFe.infNfe.ide.NFref[0].refNF.serie AS SERIE_DOCFIS_REF,
-            DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DATA_SAIDA_REC, -- Reviewing
+            DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_SAIDA_REC, -- Reviewing
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.total.ICMSTot.vProd,2)),'.'),','),15,'0') AS VLR_PRODUTO,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.total.ICMSTot.vNF,2)),'.'),','),15,'0') AS VLR_TOT_NOTA, 
             'N' AS SITUACAO,
-            '0'  AS NUM_CONTROLE_DOCTO, -- Create sequence
+            (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+getDoctoPython()  AS NUM_CONTROLE_DOCTO, -- Create sequence
             '3' AS IND_FATURA,
             protNFe.infProt.chNFe AS NUM_AUTENTIC_NFE,
-            DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DAT_LANC_PIS_COFINS -- Reviewing
+            DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
+            CASE 
+                WHEN NFe.infNFe.total.ICMSTot.vicms > 0 THEN 
+                    LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNFe.total.ICMSTot.vProd,2)),'.'),','),15,'0') 
+                ELSE 
+                    LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNFe.total.ICMSTot.vbc,2)),'.'),','),15,'0') 
+            END AS BASE_ISEN_ICMS,
+            CASE 
+                WHEN NFe.infNFe.total.ICMSTot.vicms > 0 THEN 
+                    LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNFe.total.ICMSTot.vbc,2)),'.'),','),15,'0')
+                ELSE 
+                    LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNFe.total.ICMSTot.vProd,2)),'.'),','),15,'0')  
+            END AS BASE_OUTR_ICMS,
+            CASE 
+                WHEN NFe.infNFe.total.ICMSTot.vIPI > 0 THEN 
+                    LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNFe.total.ICMSTot.vbc,2)),'.'),','),15,'0')
+                ELSE 
+                    LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNFe.total.ICMSTot.vProd,2)),'.'),','),15,'0')  
+            END AS BASE_OUTR_IPI
         FROM XML_RAW_CAPA
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
@@ -38,17 +61,22 @@ class xmlToOracle:
         SELECT
             ESTAB.COD_EMPRESA AS COD_EMPRESA,
             ESTAB.COD_ESTAB AS COD_ESTAB,
-            DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DATA_FISCAL,
+            DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_FISCAL,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
             'NFE' AS COD_DOCTO,
             '1' AS IDENT_FIS_JUR,
-            'M'||SUBSTR(NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(NFe.infNfe.dest.CNPJ,(-1*length(NFe.infNfe.dest.CNPJ)),4) AS COD_FIS_JUR,
-            LPAD(NFe.infNfe.ide.cNF,12,'0') AS NUM_DOCFIS,
+            CASE 
+                WHEN NFe.infNfe.avulsa.CNPJ IS NOT NULL THEN
+                    'M'||SUBSTR(NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(NFe.infNfe.dest.CNPJ,(-1*length(NFe.infNfe.dest.CNPJ)),4) 
+                ELSE
+                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,(-1*length(NFe.infNfe.emit.CNPJ)),4)
+                END AS COD_FIS_JUR,
+            LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
-            '1' AS IND_PRODUTO,
+            '8' AS IND_PRODUTO,
             --'CDTESTE001' AS COD_PRODUTO, -- To be defined (De/Para)
-            NVL(MSAFNCM.cod_ncm,'NP') AS COD_PRODUTO,
+            NVL(MSAFNCM.material,'NP') AS COD_PRODUTO,
             NFe.infNfe.det[0]._nItem AS NUM_ITEM,
             --NFe.infNfe.det[0].prod.CFOP AS COD_CFO, --(De/Para)
             NVL(MSAFCFOP.novo_cfo,'NP') AS COD_CFO,
@@ -59,17 +87,19 @@ class xmlToOracle:
             NFe.infNfe.det[0].prod.NCM AS COD_NBM,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.det[0].prod.vUnCom,4)),'.'),','),15,'0') AS VLR_UNIT,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.det[0].prod.vProd,2)),'.'),','),15,'0') AS VLR_ITEM,
-            NFe.infNfe.det[0].imposto.ICMS.ICMS40.orig AS COD_SITUACAO_A,
+            NVL(NVL(NFe.infNfe.det[0].imposto.ICMS.ICMS40.orig,NFe.infNfe.det[0].imposto.ICMS.ICMS00.orig),NFe.infNfe.det[0].imposto.ICMS.ICMSSN102.orig) AS COD_SITUACAO_A,
             CASE WHEN NFe.infNfe.det[0].imposto.ICMS.ICMS00.vicms > 0 THEN '90' ELSE '41' END AS COD_SITUACAO_B,
             '00003' AS COD_FEDERAL,
             CASE WHEN NFe.infNfe.det[0].imposto.ICMS.ICMS00.vicms > 0 THEN '3' ELSE '2' END AS TRIB_ICMS,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.det[0].imposto.ICMS.ICMS00.vbc,2)),'.'),','),15,'0') AS BASE_ICMS,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NVL(NFe.infNfe.det[0].imposto.ICMS.ICMS00.vbc,NFe.infNfe.det[0].prod.vProd),2)),'.'),','),15,'0') AS BASE_ICMS,
             '3' AS TRIB_IPI,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.det[0].imposto.IPI.IPITrib.vBC,2)),'.'),','),15,'0') AS BASE_IPI,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NVL(NFe.infNfe.det[0].imposto.IPI.IPITrib.vBC,NFe.infNfe.det[0].prod.vProd),2)),'.'),','),15,'0') AS BASE_IPI,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.det[0].prod.vProd,2)),'.'),','),15,'0') AS VLR_CONTAB_ITEM,
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
-            DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DAT_LANC_PIS_COFINS
+            DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
+            'N' AS IND_BEM_PATR,
+            NFe.infNfe.det[0].prod.uCom AS COD_UND_PADRAO
         FROM XML_RAW_ITEM
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
@@ -84,11 +114,26 @@ class xmlToOracle:
     spark_pessoafisjur = """
         SELECT DISTINCT
             '1' AS IND_FIS_JUR,
-            'M'||SUBSTR(NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(NFe.infNfe.dest.CNPJ,(-1*length(NFe.infNfe.dest.CNPJ)),4) AS COD_FIS_JUR,
+            CASE 
+                WHEN NFe.infNfe.avulsa.CNPJ IS NOT NULL THEN
+                    'M'||SUBSTR(NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(NFe.infNfe.dest.CNPJ,(-1*length(NFe.infNfe.dest.CNPJ)),4) 
+                ELSE
+                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,(-1*length(NFe.infNfe.emit.CNPJ)),4)
+                END AS COD_FIS_JUR,
             DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DATA_X04,
             '1' AS IND_CONTEM_COD,
-            NFe.infNfe.emit.Xnome AS RAZAO_SOCIAL,
-            NFe.infNfe.emit.CNPJ AS CPF_CGC,
+            CASE 
+                WHEN NFe.infNfe.avulsa.CNPJ IS NOT NULL THEN
+                    NFe.infNfe.dest.Xnome
+                ELSE
+                    NFe.infNfe.emit.Xnome
+                END AS RAZAO_SOCIAL,
+            CASE 
+                WHEN NFe.infNfe.avulsa.CNPJ IS NOT NULL THEN
+                    LPAD(NFe.infNfe.dest.CNPJ,14,'0')
+                ELSE
+                    LPAD(NFe.infNfe.emit.CNPJ,14,'0')
+                END AS CPF_CGC,
             NFe.infNfe.emit.IE AS INSC_ESTADUAL,
             SUBSTR(NFe.infNfe.emit.Xnome,1,50) AS NOME_FANTASIA,
             NFe.infNfe.emit.enderEmit.xLgr AS ENDERECO,
@@ -98,8 +143,16 @@ class xmlToOracle:
             NFe.infNfe.emit.enderEmit.UF AS UF,
             NFe.infNfe.emit.enderEmit.CEP AS CEP,
             SUBSTR(NFe.infNfe.emit.enderEmit.cPais,1,3) AS COD_PAIS,
-            SUBSTR(NFe.infNfe.emit.enderEmit.cmun,1,5) AS COD_MUNICIPIO
-        FROM XML_RAW_CAPA
+            SUBSTR(NFe.infNfe.emit.enderEmit.cmun,3,5) AS COD_MUNICIPIO
+        FROM XML_RAW_CAPA XRC
+        WHERE NOT EXISTS (SELECT 1 FROM X04_PESSOA_FIS_JUR X04 WHERE 
+            (CASE 
+                WHEN XRC.NFe.infNfe.avulsa.CNPJ IS NOT NULL THEN
+                    'M'||SUBSTR(XRC.NFe.infNfe.dest.CNPJ,1,3) || SUBSTR(XRC.NFe.infNfe.dest.CNPJ,(-1*length(XRC.NFe.infNfe.dest.CNPJ)),4) 
+                ELSE
+                    'M'||SUBSTR(XRC.NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(XRC.NFe.infNfe.emit.CNPJ,(-1*length(XRC.NFe.infNfe.emit.CNPJ)),4)
+                END) = X04.COD_FIS_JUR
+            )
     """
 
     oracle_param_produto = """
@@ -156,7 +209,10 @@ class xmlToOracle:
         NUM_CONTROLE_DOCTO,
         IND_FATURA,
         NUM_AUTENTIC_NFE,
-        DAT_LANC_PIS_COFINS
+        DAT_LANC_PIS_COFINS,
+        BASE_ISEN_ICMS,
+        BASE_OUTR_ICMS,
+        BASE_OUTR_IPI
         )
         SELECT * FROM MSAF.SAFX07_TEMP
     """
@@ -194,7 +250,9 @@ class xmlToOracle:
         VLR_CONTAB_ITEM,
         COD_SITUACAO_PIS,
         COD_SITUACAO_COFINS,
-        DAT_LANC_PIS_COFINS
+        DAT_LANC_PIS_COFINS,
+        IND_BEM_PATR,
+        COD_UND_PADRAO
         )
         SELECT * FROM MSAF.SAFX08_TEMP
     """
