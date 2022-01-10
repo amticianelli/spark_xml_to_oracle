@@ -1182,6 +1182,114 @@
                                                          "metadata":{
                                                             
                                                          },
+                                                         "name":"ICMS30",
+                                                         "nullable":true,
+                                                         "type":{
+                                                            "fields":[
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"CST",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"modBC",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"motDesICMS",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"orig",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"pFCP",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"pICMS",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"pRedBC",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"vBC",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"vBCFCP",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"vFCP",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"vICMS",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"vICMSDeson",
+                                                                  "nullable":true,
+                                                                  "type":"double"
+                                                               }
+                                                            ],
+                                                            "type":"struct"
+                                                         }
+                                                      },
+                                                      {
+                                                         "metadata":{
+                                                            
+                                                         },
                                                          "name":"ICMS40",
                                                          "nullable":true,
                                                          "type":{
@@ -1751,6 +1859,90 @@
                                                             
                                                          },
                                                          "name":"ICMSSN102",
+                                                         "nullable":true,
+                                                         "type":{
+                                                            "fields":[
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"CSOSN",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"orig",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               }
+                                                            ],
+                                                            "type":"struct"
+                                                         }
+                                                      },
+                                                      {
+                                                         "metadata":{
+                                                            
+                                                         },
+                                                         "name":"ICMSSN201",
+                                                         "nullable":true,
+                                                         "type":{
+                                                            "fields":[
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"CSOSN",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"orig",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               }
+                                                            ],
+                                                            "type":"struct"
+                                                         }
+                                                      },
+                                                      {
+                                                         "metadata":{
+                                                            
+                                                         },
+                                                         "name":"ICMSSN202",
+                                                         "nullable":true,
+                                                         "type":{
+                                                            "fields":[
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"CSOSN",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               },
+                                                               {
+                                                                  "metadata":{
+                                                                     
+                                                                  },
+                                                                  "name":"orig",
+                                                                  "nullable":true,
+                                                                  "type":"long"
+                                                               }
+                                                            ],
+                                                            "type":"struct"
+                                                         }
+                                                      },
+                                                      {
+                                                         "metadata":{
+                                                            
+                                                         },
+                                                         "name":"ICMSPart",
                                                          "nullable":true,
                                                          "type":{
                                                             "fields":[
@@ -2897,6 +3089,14 @@
                                        
                                     },
                                     "name":"CNAE",
+                                    "nullable":true,
+                                    "type":"long"
+                                 },
+                                 {
+                                    "metadata":{
+                                       
+                                    },
+                                    "name":"CPF",
                                     "nullable":true,
                                     "type":"long"
                                  },

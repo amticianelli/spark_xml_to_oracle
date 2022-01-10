@@ -6,7 +6,7 @@ from query import xmlToOracle
 from datetime import datetime
 
 # tornar o pyspark "importável"
-# findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
+#findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
 
 findspark.init()
 
@@ -70,6 +70,8 @@ except Exception as e:
   print('File already existis')
 
 # Starting local session and import data do Spark
+
+output_name = ""
 
 if len(xmls_list) > 0:
 
@@ -154,7 +156,15 @@ if len(xmls_list) > 0:
         .option('user',user) \
         .option('password',password) \
         .option("fetchsize","500")  \
-        .option('dbtable','MSAF.X04_PESSOA_FIS_JUR') \
+        .option('query',"""
+                          WITH v1 AS (
+                          SELECT 
+                            x04.*,
+                            RANK() OVER(PARTITION BY CPF_CGC ORDER BY VALID_FIS_JUR DESC,IND_FIS_JUR, IDENT_FIS_JUR DESC) AS POSICAO
+                          FROM MSAF.X04_PESSOA_FIS_JUR x04
+                          )
+                          SELECT * FROM v1 WHERE POSICAO = 1
+                        """) \
         .load()
 
     df_cfop = spark.read \
@@ -191,8 +201,20 @@ if len(xmls_list) > 0:
                     )
 
 
+    
+
     # Setting getDocto function as an UDF
     spark.udf.register("getDoctoPython",getCodDocto)
+
+    # Visao de pessoa fisica juridica
+    df_x04.createOrReplaceTempView('X04_PESSOA_FIS_JUR')
+    
+
+    # Visao de item
+    df_result_item.createOrReplaceTempView('XML_RAW_ITEM')
+    df_sql_item = spark.sql(xmlToOracle.spark_item)
+    df_sql_item.createOrReplaceTempView('XML_ITEM') # Para utilizacao na capa
+
 
     # Visao de capa
     df.createOrReplaceTempView('XML_RAW_CAPA')
@@ -207,10 +229,8 @@ if len(xmls_list) > 0:
     ##
 
 
-
-    # Visao de item
-    df_result_item.createOrReplaceTempView('XML_RAW_ITEM')
-    df_sql_item = spark.sql(xmlToOracle.spark_item)
+    df_sql_pessoafisjur = spark.sql(xmlToOracle.spark_pessoafisjur)
+    
 
     ### Seprando registros de item
     df_sql_item_error = df_sql_item \
@@ -220,9 +240,6 @@ if len(xmls_list) > 0:
                               .where("COD_CFO != 'NP' AND COD_PRODUTO != 'NP' AND COD_NATUREZA_OP != 'NP'")
 
 
-    # Visao de pessoa fisica juridica
-    df_x04.createOrReplaceTempView('X04_PESSOA_FIS_JUR')
-    df_sql_pessoafisjur = spark.sql(xmlToOracle.spark_pessoafisjur)
 
 
     print('Writing the results to temp tables')
@@ -312,7 +329,12 @@ if len(xmls_list) > 0:
     spark.stop()
   except Exception as e:
     for i in xmls_list_processing:
-      shutil.move(i,xml_path+r"error\\")
+      try:
+        shutil.move(i,xml_path+r"error\\")
+      except Exception as e2:
+        shutil.rmtree(i)
+        f = open(xml_path+r"error\\xml_error_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))+'.txt','a')
+        docto = f.write(str(e2))
     if output_name != "":
       shutil.rmtree(xml_path+r'\processing\\'+output_name)
     f = open(xml_path+r"error\\xml_error_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))+'.txt','a')
