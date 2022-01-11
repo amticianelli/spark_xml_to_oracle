@@ -30,6 +30,9 @@ Necessary tools:
 
 ## Program run
     - Run the program with the following command: 
+    
 ``` python    
 python main.py
 ```
+
+    - The program will insert all the data in the SAFX07, SAFX08 and SAFX04 tables.
