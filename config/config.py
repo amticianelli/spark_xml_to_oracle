@@ -5,10 +5,10 @@ class Config:
     schema_path= r"C:\GDrive\Adejo\SouzaCruz\spark_xml_to_oracle\config\nfe_schema.json"
 
     # Conexao Oracle Mastersaf DW
-    jdbc_string = r'jdbc:oracle:thin:@db202110181402_high?TNS_ADMIN=C:/wallet'
+    jdbc_string = r''
     driver = 'oracle.jdbc.driver.OracleDriver'
     user = 'ADMIN'
-    password='w8Z4c85_SwJQau'
+    password=''
 
     # Spark configurations (nao alterar)
     spark_mem = '5g'
