@@ -21,4 +21,13 @@ Necessary tools:
     - Download Oracle JDBC driver, and move it to the spark Jars diretory in SPARK_HOME: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
     
     
- 
+ ## Program configuration
+    - Set the environment variable ORACLE_PASSWORD for the database;
+    - Open the file config/config.py and set the database configuration connection;
+    - Run the scripts on the directory config/plsql/ in the Mastersaf DW schema user in Oracle;
+
+## Program run
+    - Run the program with the following command: 
+``` python    
+python main.py
+```
