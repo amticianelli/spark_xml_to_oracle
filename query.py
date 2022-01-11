@@ -11,9 +11,9 @@ class xmlToOracle:
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
             NVL(X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
-                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,(-1*length(NFe.infNfe.emit.CNPJ)),4) 
+                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
                 ELSE
-                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,(-1*length(NFe.infNfe.emit.CPF)),4)
+                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,-4)
                 END)) AS COD_FIS_JUR,
             LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
@@ -82,9 +82,9 @@ class xmlToOracle:
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
             NVL(X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
-                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,(-1*length(NFe.infNfe.emit.CNPJ)),4) 
+                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
                 ELSE
-                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,(-1*length(NFe.infNfe.emit.CPF)),4)
+                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,-4)
                 END)) AS COD_FIS_JUR,
             LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
@@ -167,9 +167,9 @@ class xmlToOracle:
             '1' AS IND_FIS_JUR,
             CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
-                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,(-1*length(NFe.infNfe.emit.CNPJ)),4) 
+                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,3) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
                 ELSE
-                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,(-1*length(NFe.infNfe.emit.CPF)),4)
+                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,-4)
             END AS COD_FIS_JUR,
             DATE_FORMAT(NFe.infNfe.ide.dhEmi,'yyyyMMdd') AS DATA_X04,
             '1' AS IND_CONTEM_COD,
