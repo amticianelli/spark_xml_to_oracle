@@ -1,5 +1,5 @@
 # spark_xml_to_oracle
-Souza Cruz ETL process to convert XML to different visions in Oracle
+Souza Cruz ETL process to convert XML to different visions in Oracle. The program will be reading a predefined directory for new files with the xml extension, and ingest them to the Oracle Database.
 
 
 # Installation
