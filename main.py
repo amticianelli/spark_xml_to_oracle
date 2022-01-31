@@ -83,6 +83,7 @@ if len(xmls_list) > 0:
               .config('spark.submit.deployMode','client') \
               .config('spark.yarn.queue','short') \
               .config('spark.executor.cores',Config.spark_core) \
+              .config('spark.sql.shuffle.partitions','4') \
               .master('local[*]') \
               .appName("ETL_xml_to_SAFX") \
               .getOrCreate()
