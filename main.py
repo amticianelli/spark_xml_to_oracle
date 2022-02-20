@@ -89,7 +89,7 @@ if len(xmls_list) > 0:
               .getOrCreate()
 
 
-    spark.sparkContext.setLogLevel("INFO")
+    spark.sparkContext.setLogLevel("WARN")
 
     """```
     from pyspark.sql import SparkSession,SQLContext
@@ -125,6 +125,8 @@ if len(xmls_list) > 0:
         .option("rowTag", "nfeProc") \
         .schema(newSchema) \
         .load(','.join(xmls_list_processing))
+        #
+        
         #.option("fetchsize","500")  \
         #.load('/content/xml/42200133009911009519550050000063501420824555.xml')
         #
@@ -134,7 +136,15 @@ if len(xmls_list) > 0:
     df.write.parquet(xml_path+r'\processing\\'+output_name)
     df = spark.read.parquet(xml_path+r'\processing\\'+output_name)
 
+    ## Writing Schema Json
+    #f = open('new_architecture_current.json','a')
+    #f.write(str(df.schema.jsonValue()))
+    #f.close()
 
+    ## Verifying the schema
+
+    if df.filter("NFe is null").count() > 0:
+      raise 'Schema field error, please contact the support for adding the new fields'
 
     # Returning Mastersaf DW tables
     df_estab = spark.read \
@@ -145,8 +155,8 @@ if len(xmls_list) > 0:
         .option('password',password) \
         .option("fetchsize","500")  \
         .option('dbtable','MSAF.ESTABELECIMENTO') \
-        .load()
-
+        .load() \
+        .cache()
     
     # Reading pessoa_fis_jur table
 
@@ -166,7 +176,8 @@ if len(xmls_list) > 0:
                           )
                           SELECT * FROM v1 WHERE POSICAO = 1
                         """) \
-        .load()
+        .load() \
+        .cache()
 
     df_cfop = spark.read \
         .format("jdbc") \
@@ -176,7 +187,8 @@ if len(xmls_list) > 0:
         .option('password',password) \
         .option("fetchsize","500")  \
         .option('query',xmlToOracle.oracle_param_cfop) \
-        .load()
+        .load()\
+        .cache()
 
     df_ncm = spark.read \
         .format("jdbc") \
@@ -186,7 +198,8 @@ if len(xmls_list) > 0:
         .option('password',password) \
         .option("fetchsize","500")  \
         .option('query',xmlToOracle.oracle_param_produto) \
-        .load()
+        .load()\
+        .cache()
 
 
     df_estab.createOrReplaceTempView('ESTABELECIMENTO')
@@ -202,6 +215,9 @@ if len(xmls_list) > 0:
                     )
 
 
+    print('Number of headers to be processed: '+str(df.count()))
+    df.limit(10).show()
+    print('Number of itens to be processed: '+str(df_result_item.count()))
     
 
     # Setting getDocto function as an UDF
@@ -213,13 +229,16 @@ if len(xmls_list) > 0:
 
     # Visao de item
     df_result_item.createOrReplaceTempView('XML_RAW_ITEM')
-    df_sql_item = spark.sql(xmlToOracle.spark_item)
+    df_sql_item = spark.sql(xmlToOracle.spark_item) \
+        .cache()
     df_sql_item.createOrReplaceTempView('XML_ITEM') # Para utilizacao na capa
 
 
     # Visao de capa
     df.createOrReplaceTempView('XML_RAW_CAPA')
     df_sql_capa = spark.sql(xmlToOracle.spark_capa)
+
+    
 
     ### Separando registros de capa
     df_sql_capa_error = df_sql_capa \
@@ -242,6 +261,9 @@ if len(xmls_list) > 0:
 
 
 
+    print('Number of headers to be inserted: '+str(df_sql_capa.count()))
+    print('Number of itens to be inserted: '+str(df_sql_item.count()))
+    
 
     print('Writing the results to temp tables')
     
@@ -282,20 +304,24 @@ if len(xmls_list) > 0:
 
     # Show bad NF
 
-    df_sql_capa_error \
-      .repartition(1) \
-      .write \
-      .option('header',True) \
-      .csv(xml_path+r"\\error\\param_error_capa_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))) \
+    if df_sql_capa_error.rdd.count() > 0:
+      df_sql_capa_error \
+        .repartition(1) \
+        .write \
+        .option('header',True) \
+        .csv(xml_path+r"\\error\\param_error_capa_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))) \
 
+      print('Number of headers with errors: '+str(df_sql_capa_error.count()))
 
-    df_sql_item_error \
-      .repartition(1) \
-      .write \
-      .option('header',True) \
-      .csv(xml_path+r"\\error\\param_error_item_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))) \
+    if df_sql_item_error.rdd.count() > 0:
+      df_sql_item_error \
+        .repartition(1) \
+        .write \
+        .option('header',True) \
+        .csv(xml_path+r"\\error\\param_error_item_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))) \
 
-    print(df_sql_item.count())
+      print('Number of itens with errors: '+str(df_sql_item_error.count()))
+
 
     print('Writing the results to SAFX tables')
 
