@@ -29,7 +29,7 @@ driver = Config.driver
 user = Config.user
 password= Config.password
 
-# Read Cod Docto number position
+# Read Cod Docto number position (UDF)
 def getCodDocto():
   docto = 900000061429
   if(os.path.exists(xml_path+'/num_controle_counter.txt')):
@@ -43,6 +43,14 @@ def getCodDocto():
     f.close()
   
   return docto
+
+
+def tagAvulsa(cpf,insc_estad,vlr):
+  if cpf != None and insc_estad != None:
+    return 0
+  else:
+    return vlr
+
 
 def setCodDocto(docto_number):
   f = open(xml_path+'/num_controle_counter.txt','w')
@@ -179,6 +187,8 @@ if len(xmls_list) > 0:
         .load() \
         .cache()
 
+    # Returning CFOP
+
     df_cfop = spark.read \
         .format("jdbc") \
         .option('driver',driver) \
@@ -190,6 +200,8 @@ if len(xmls_list) > 0:
         .load()\
         .cache()
 
+    # Returning PRODUTO
+    
     df_ncm = spark.read \
         .format("jdbc") \
         .option('driver',driver) \
@@ -220,8 +232,9 @@ if len(xmls_list) > 0:
     print('Number of itens to be processed: '+str(df_result_item.count()))
     
 
-    # Setting getDocto function as an UDF
+    # Setting functions as an UDF
     spark.udf.register("getDoctoPython",getCodDocto)
+    spark.udf.register("setTagAvulsa",tagAvulsa)
 
     # Visao de pessoa fisica juridica
     df_x04.createOrReplaceTempView('X04_PESSOA_FIS_JUR')
