@@ -25,22 +25,22 @@ class xmlToOracle:
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,1,12) AS NUM_DOCFIS_REF,
             ''||NFe.infNfe.ide.NFref[0].refNF.serie AS SERIE_DOCFIS_REF,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_SAIDA_REC, -- Reviewing
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.total.ICMSTot.vProd,2)),'.'),','),15,'0') AS VLR_PRODUTO,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.total.ICMSTot.vNF,2)),'.'),','),15,'0') AS VLR_TOT_NOTA, 
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2)),'.'),','),15,'0') AS VLR_PRODUTO,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2)),'.'),','),15,'0') AS VLR_TOT_NOTA, 
             'N' AS SITUACAO,
             (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+getDoctoPython()  AS NUM_CONTROLE_DOCTO, -- Create sequence
             '3' AS IND_FATURA,
             protNFe.infProt.chNFe AS NUM_AUTENTIC_NFE,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(XI.BASE_ISEN_ICMS,2)),'.'),','),15,'0') AS BASE_ISEN_ICMS,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(XI.BASE_OUTR_ICMS,2)),'.'),','),15,'0') AS BASE_OUTR_ICMS,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(XI.BASE_IPI,2)),'.'),','),15,'0') AS BASE_OUTR_IPI,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_ISEN_ICMS),2)),'.'),','),15,'0') AS BASE_ISEN_ICMS,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_OUTR_ICMS),2)),'.'),','),15,'0') AS BASE_OUTR_ICMS,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_IPI),2)),'.'),','),15,'0') AS BASE_OUTR_IPI,
             '55' AS COD_MODELO_COTEPE,
             CASE 
                 WHEN NFe.infNfe.emit.CPF IS NOT NULL AND NFe.infNfe.emit.IE IS NOT NULL THEN 'S' 
                 ELSE NULL
             END AS IND_NF_REG_ESPECIAL,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.total.ICMSTot.vDesc,2)),'.'),','),15,'0') AS VLR_DESCONTO,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2)),'.'),','),15,'0') AS VLR_DESCONTO,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(NFe.infNfe.total.ICMSTot.vDesc,2)),'.'),','),15,'0') AS VLR_ABAT_NTRIBUTADO
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
@@ -89,7 +89,6 @@ class xmlToOracle:
             LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             '8' AS IND_PRODUTO,
-            --'CDTESTE001' AS COD_PRODUTO, -- To be defined (De/Para)
             NVL(MSAFNCM.material,'NP') AS COD_PRODUTO,
             col._nItem AS NUM_ITEM,
             --col.prod.CFOP AS COD_CFO, --(De/Para)
@@ -99,8 +98,8 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.qCom,6)),'.'),','),11,'0') AS QUANTIDADE,
             col.prod.uCom AS COD_MEDIDA,
             LPAD(col.prod.NCM,8,'0') AS COD_NBM,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.vUnCom,4)),'.'),','),15,'0') AS VLR_UNIT,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.vProd,2)),'.'),','),15,'0') AS VLR_ITEM,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vUnCom),4)),'.'),','),15,'0') AS VLR_UNIT,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd),2)),'.'),','),15,'0') AS VLR_ITEM,
             --NVL(NVL(col.imposto.ICMS.ICMS40.orig,col.imposto.ICMS.ICMS00.orig),col.imposto.ICMS.ICMSSN102.orig) AS COD_SITUACAO_A,
             CASE 
                 WHEN col.imposto.ICMS.ICMS00.orig IS NOT NULL THEN col.imposto.ICMS.ICMS00.orig
@@ -123,16 +122,17 @@ class xmlToOracle:
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '90' ELSE '41' END AS COD_SITUACAO_B,
             '00003' AS COD_FEDERAL,
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '3' ELSE '2' END AS TRIB_ICMS,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0),2)),'.'),','),15,'0') AS BASE_ICMS,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0)),2)),'.'),','),15,'0') AS BASE_ICMS,
             '3' AS TRIB_IPI,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0),2)),'.'),','),15,'0') AS BASE_IPI,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0),2)),'.'),','),15,'0') AS VLR_CONTAB_ITEM,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI),0),2)),'.'),','),15,'0') AS BASE_IPI,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0)),2)),'.'),','),15,'0') AS VLR_CONTAB_ITEM,
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
             'N' AS IND_BEM_PATR,
-            col.prod.uCom AS COD_UND_PADRAO,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(col.prod.vDesc,2)),'.'),','),15,'0') AS VLR_DESCONTO,
+            --col.prod.uCom AS COD_UND_PADRAO,
+            NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_UND_PADRAO,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vDesc),2)),'.'),','),15,'0') AS VLR_DESCONTO,
             '03' AS COD_TRIB_IPI 
         FROM XML_RAW_ITEM
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
@@ -197,10 +197,15 @@ class xmlToOracle:
             det.nome_param,
             det.Conteudo cod_ncm,
             det.descricao,
-            det.valor material
+            det.valor material,
+            x2017.cod_und_padrao
         from msaf.fpar_param_det det
         join msaf.fpar_parametros par on 1=1
             and det.id_parametro   = par.id_parametros
+        left join x2013_produto x2013 on 1=1
+            and det.Conteudo = x2013.cod_produto
+        left join x2017_unid_medida_padrao x2017 on 1=1
+            and x2013.ident_und_padrao = x2017.ident_und_padrao
         where 1=1
             and par.nome_framework = 'ADEJO_SOUZAC_XML_CPAR'
             and det.nome_param     = 'Produto'
