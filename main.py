@@ -45,7 +45,7 @@ def getCodDocto():
   return docto
 
 
-def tagAvulsa(cpf,insc_estad,vlr):
+def tagAvulsa(cpf: str,insc_estad: str,vlr: float):
   if cpf != None and insc_estad != None:
     return 0
   else:
