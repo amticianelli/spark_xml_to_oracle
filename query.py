@@ -124,7 +124,7 @@ class xmlToOracle:
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '3' ELSE '2' END AS TRIB_ICMS,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0)),2)),'.'),','),15,'0') AS BASE_ICMS,
             '3' AS TRIB_IPI,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI),0),2)),'.'),','),15,'0') AS BASE_IPI,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0)),2)),'.'),','),15,'0') AS BASE_IPI,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0)),2)),'.'),','),15,'0') AS VLR_CONTAB_ITEM,
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
@@ -204,7 +204,7 @@ class xmlToOracle:
             and det.id_parametro   = par.id_parametros
         left join x2013_produto x2013 on 1=1
             and det.Conteudo = x2013.cod_produto
-        left join x2017_unid_medida_padrao x2017 on 1=1
+        left join x2017_und_padrao x2017 on 1=1
             and x2013.ident_und_padrao = x2017.ident_und_padrao
         where 1=1
             and par.nome_framework = 'ADEJO_SOUZAC_XML_CPAR'
