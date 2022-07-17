@@ -234,7 +234,7 @@ if len(xmls_list) > 0:
 
     # Setting functions as an UDF
     spark.udf.register("getDoctoPython",getCodDocto)
-    spark.udf.register("setTagAvulsa",tagAvulsa)
+    spark.udf.register("setTagAvulsa",tagAvulsa,FloatType())
 
     # Visao de pessoa fisica juridica
     df_x04.createOrReplaceTempView('X04_PESSOA_FIS_JUR')

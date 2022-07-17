@@ -203,7 +203,7 @@ class xmlToOracle:
         join msaf.fpar_parametros par on 1=1
             and det.id_parametro   = par.id_parametros
         left join x2013_produto x2013 on 1=1
-            and det.Conteudo = x2013.cod_produto
+            and det.valor = x2013.cod_produto
         left join x2017_und_padrao x2017 on 1=1
             and x2013.ident_und_padrao = x2017.ident_und_padrao
         where 1=1
