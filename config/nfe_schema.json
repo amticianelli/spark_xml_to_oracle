@@ -3016,6 +3016,14 @@
                                                 }
                                              },
                                              {
+                                                "name":"vSeg",
+                                                "type":"double",
+                                                "nullable":true,
+                                                "metadata":{
+                                                   
+                                                }
+                                             },
+                                             {
                                                 "name":"vProd",
                                                 "type":"double",
                                                 "nullable":true,
