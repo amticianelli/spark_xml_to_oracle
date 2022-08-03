@@ -22,8 +22,8 @@ class xmlToOracle:
             ''||NFe.infNfe.ide.mod AS COD_MODELO,
             --''||XML_RAW_CAPA.NFe.infNfe.det[0].prod.CFOP AS COD_CFO,
             NVL(MSAFCFOP.novo_cfo,'NP') AS COD_CFO,
-            ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,23,13) AS NUM_DOCFIS_REF,
-            ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNF.serie,23,4) AS SERIE_DOCFIS_REF,
+            ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,26,9) AS NUM_DOCFIS_REF,
+            ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,23,3) AS SERIE_DOCFIS_REF,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_SAIDA_REC, -- Reviewing
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2)),'.'),','),15,'0') AS VLR_PRODUTO,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2)),'.'),','),15,'0') AS VLR_TOT_NOTA, 
