@@ -155,6 +155,7 @@ if len(xmls_list) > 0:
       raise 'Schema field error, please contact the support for adding the new fields'
 
     # Returning Mastersaf DW tables
+    # Adjustment requested by Jorge to remove an especific estab (08/15/2022)
     df_estab = spark.read \
         .format("jdbc") \
         .option('driver',driver) \
@@ -162,7 +163,12 @@ if len(xmls_list) > 0:
         .option('user',user) \
         .option('password',password) \
         .option("fetchsize","500")  \
-        .option('dbtable','MSAF.ESTABELECIMENTO') \
+        .option('query',"""
+                          SELECT * 
+                          FROM MSAF.ESTABELECIMENTO 
+                          WHERE 1=1
+                          AND (CGC != 33009911046988 AND COD_ESTAB != 'BRBX')
+                  """) \
         .load() \
         .cache()
     
