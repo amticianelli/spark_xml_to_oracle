@@ -167,7 +167,7 @@ if len(xmls_list) > 0:
                           SELECT * 
                           FROM MSAF.ESTABELECIMENTO 
                           WHERE 1=1
-                          AND (CGC != 33009911046988 AND COD_ESTAB != 'BRBX')
+                          AND (CGC != '33009911046988' AND COD_ESTAB != 'BRBX')
                   """) \
         .load() \
         .cache()
