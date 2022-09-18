@@ -121,10 +121,19 @@ class xmlToOracle:
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '90' ELSE '41' END AS COD_SITUACAO_B,
             '00003' AS COD_FEDERAL,
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '3' ELSE '2' END AS TRIB_ICMS,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) + NVL(NVL(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST),0) + NVL(NVL(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST),0)),2)),'.'),','),15,'0') AS BASE_ICMS,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
+                + coalesce(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST,col.imposto.ICMS.ICMS30.vICMSST,col.imposto.ICMS.ICMS90.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN900.vICMSST,0)
+                + coalesce(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST,col.imposto.ICMS.ICMS30.vFCPST,col.imposto.ICMS.ICMS90.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN900.vFCPST,0)
+            ),2)),'.'),','),15,'0') AS BASE_ICMS,
             '3' AS TRIB_IPI,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) + NVL(NVL(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST),0) + NVL(NVL(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST),0)),2)),'.'),','),15,'0') AS BASE_IPI,
-            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) + NVL(NVL(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST),0) + NVL(NVL(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST),0)),2)),'.'),','),15,'0') AS VLR_CONTAB_ITEM,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
+                + coalesce(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST,col.imposto.ICMS.ICMS30.vICMSST,col.imposto.ICMS.ICMS90.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN900.vICMSST,0)
+                + coalesce(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST,col.imposto.ICMS.ICMS30.vFCPST,col.imposto.ICMS.ICMS90.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN900.vFCPST,0)
+            ),2)),'.'),','),15,'0') AS BASE_IPI,
+            LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
+                + coalesce(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST,col.imposto.ICMS.ICMS30.vICMSST,col.imposto.ICMS.ICMS90.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN900.vICMSST,0)
+                + coalesce(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST,col.imposto.ICMS.ICMS30.vFCPST,col.imposto.ICMS.ICMS90.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN900.vFCPST,0)
+            ),2)),'.'),','),15,'0') AS VLR_CONTAB_ITEM,
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
