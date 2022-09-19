@@ -1156,6 +1156,22 @@
                                                                   "metadata":{
                                                                      
                                                                   }
+                                                               },
+                                                               {
+                                                                  "name":"vFCPST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
+                                                                  "name":"vICMSST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
                                                                }
                                                             ]
                                                          },
@@ -1259,6 +1275,22 @@
                                                                },
                                                                {
                                                                   "name":"vICMSDeson",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
+                                                                  "name":"vFCPST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
+                                                                  "name":"vICMSST",
                                                                   "type":"double",
                                                                   "nullable":true,
                                                                   "metadata":{
@@ -1782,6 +1814,14 @@
                                                                   }
                                                                },
                                                                {
+                                                                  "name":"vFCPST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
                                                                   "name":"vICMSST",
                                                                   "type":"double",
                                                                   "nullable":true,
@@ -1888,6 +1928,22 @@
                                                                   "metadata":{
                                                                      
                                                                   }
+                                                               },
+                                                               {
+                                                                  "name":"vFCPST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
+                                                                  "name":"vICMSST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
                                                                }
                                                             ]
                                                          },
@@ -1912,6 +1968,22 @@
                                                                {
                                                                   "name":"orig",
                                                                   "type":"long",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
+                                                                  "name":"vFCPST",
+                                                                  "type":"double",
+                                                                  "nullable":true,
+                                                                  "metadata":{
+                                                                     
+                                                                  }
+                                                               },
+                                                               {
+                                                                  "name":"vICMSST",
+                                                                  "type":"double",
                                                                   "nullable":true,
                                                                   "metadata":{
                                                                      
