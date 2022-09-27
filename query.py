@@ -17,7 +17,7 @@ class xmlToOracle:
                 END)) AS COD_FIS_JUR,
             LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
-            DATE_FORMAT(REPLACE(NFe.infNfe.ide.dhEmi,'T00:00:00-02:00',''),'yyyyMMdd') AS DATA_EMISSAO,
+            DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_EMISSAO,
             '1' AS COD_CLASS_DOC_FIS,
             ''||NFe.infNfe.ide.mod AS COD_MODELO,
             --''||XML_RAW_CAPA.NFe.infNfe.det[0].prod.CFOP AS COD_CFO,
@@ -179,7 +179,7 @@ class xmlToOracle:
                 ELSE
                     'M'||SUBSTR(NFe.infNfe.emit.CPF,1,3) || SUBSTR(NFe.infNfe.emit.CPF,-4)
             END AS COD_FIS_JUR,
-            DATE_FORMAT(REPLACE(NFe.infNfe.ide.dhEmi,'T00:00:00-02:00',''),'yyyyMMdd') AS DATA_X04,
+            DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_X04,
             '1' AS IND_CONTEM_COD,
             NFe.infNfe.emit.Xnome AS RAZAO_SOCIAL,
             NVL(LPAD(NFe.infNfe.emit.CNPJ,14,'0'),LPAD(NFe.infNfe.emit.CPF,11,'0')) AS CPF_CGC,
