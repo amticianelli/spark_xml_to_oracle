@@ -140,20 +140,15 @@ if len(xmls_list) > 0:
         #.load('/content/xml/42200133009911009519550050000063501420824555.xml')
         #
 
+    ## Verifying the schema
+    if df.filter("NFe is null").count() > 0:
+      df.show()
+      raise 'Schema field error, please contact the support for adding the new fields'
+
     # Writing result to parquet
     output_name = 'xml_processing_'+datetime.today().strftime("%Y%m%d%H%M%S")+'.parquet'
     df.write.parquet(xml_path+r'\processing\\'+output_name)
     df = spark.read.parquet(xml_path+r'\processing\\'+output_name)
-
-    ## Writing Schema Json
-    #f = open('new_architecture_current.json','a')
-    #f.write(str(df.schema.jsonValue()))
-    #f.close()
-
-    ## Verifying the schema
-
-    if df.filter("NFe is null").count() > 0:
-      raise 'Schema field error, please contact the support for adding the new fields'
 
     # Returning Mastersaf DW tables
     # Adjustment requested by Jorge to remove an especific estab (08/15/2022)
