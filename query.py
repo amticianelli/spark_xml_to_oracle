@@ -200,6 +200,16 @@ class xmlToOracle:
             AND X04.CPF_CGC IS NULL
     """
 
+    ranked_produto = """
+    WITH v1 AS (
+      SELECT 
+        x2013.*,
+        RANK() OVER(PARTITION BY COD_PRODUTO ORDER BY VALID_PRODUTO DESC) AS POSICAO
+      FROM MSAF.x2013_produto x2013
+      )
+      SELECT * FROM v1 WHERE POSICAO = 1
+    """
+
     oracle_param_produto = """
         select distinct 
             det.nome_param,
@@ -210,14 +220,16 @@ class xmlToOracle:
         from msaf.fpar_param_det det
         join msaf.fpar_parametros par on 1=1
             and det.id_parametro   = par.id_parametros
-        left join x2013_produto x2013 on 1=1
+        left join ({}) x2013 on 1=1
             and det.valor = x2013.cod_produto
         left join x2017_und_padrao x2017 on 1=1
             and x2013.ident_und_padrao = x2017.ident_und_padrao
         where 1=1
             and par.nome_framework = 'ADEJO_SOUZAC_XML_CPAR'
             and det.nome_param     = 'Produto'
-    """
+    """.format(ranked_produto)
+
+    
 
     oracle_param_cfop = """
         select distinct 
