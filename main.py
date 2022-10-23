@@ -15,6 +15,7 @@ from pyspark import SparkContext, SparkConf
 from pyspark.sql.functions import explode, row_number
 from pyspark.sql.types import *
 from pyspark.sql.functions import struct
+from pyspark.sql.functions import input_file_name
 from config.config import Config
 
 
@@ -75,14 +76,13 @@ try:
   for i in xmls_list:
     shutil.move(i,xml_path+r'processing\\')
 except Exception as e:
-  print('File already existis')
+  print('File already exists')
 
 # Starting local session and import data do Spark
 
-output_name = ""
+fileName = datetime.today().strftime("%Y%m%d%H%M%S")
 
 if len(xmls_list) > 0:
-
   try:
     spark = SparkSession \
               .builder \
@@ -132,6 +132,7 @@ if len(xmls_list) > 0:
         .format("com.databricks.spark.xml") \
         .option("rootTag", "hierarchy") \
         .option("rowTag", "nfeProc") \
+        .withColumn("filename",input_file_name()) \
         .schema(newSchema) \
         .load(','.join(xmls_list_processing))
         #
@@ -143,10 +144,13 @@ if len(xmls_list) > 0:
     ## Verifying the schema
     if df.filter("NFe is null").count() > 0:
       df.show()
-      raise 'Schema field error, please contact the support for adding the new fields'
+      #raise 'Schema field error, please contact the support for adding the new fields'
+      df_schemaError = df.where('NFe is null')
+      df = df.where('NFe is not null')
+
 
     # Writing result to parquet
-    output_name = 'xml_processing_'+datetime.today().strftime("%Y%m%d%H%M%S")+'.parquet'
+    output_name = 'xml_processing_'+fileName+'.parquet'
     df.write.parquet(xml_path+r'\processing\\'+output_name)
     df = spark.read.parquet(xml_path+r'\processing\\'+output_name)
 
@@ -282,7 +286,7 @@ if len(xmls_list) > 0:
 
 
     print('Number of headers to be inserted: '+str(df_sql_capa.count()))
-    print('Number of itens to be inserted: '+str(df_sql_item.count()))
+    print('Number of items to be inserted: '+str(df_sql_item.count()))
     
 
     print('Writing the results to temp tables')
@@ -329,7 +333,7 @@ if len(xmls_list) > 0:
         .repartition(1) \
         .write \
         .option('header',True) \
-        .csv(xml_path+r"\\error\\param_error_capa_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))) \
+        .csv(xml_path+r"\\error\\param_error_capa_"+str(fileName)) \
 
       print('Number of headers with errors: '+str(df_sql_capa_error.count()))
 
@@ -338,10 +342,35 @@ if len(xmls_list) > 0:
         .repartition(1) \
         .write \
         .option('header',True) \
-        .csv(xml_path+r"\\error\\param_error_item_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))) \
+        .csv(xml_path+r"\\error\\param_error_item_"+str(fileName)) \
 
       print('Number of itens with errors: '+str(df_sql_item_error.count()))
 
+    if df_schemaError.rdd.count() > 0:
+      df_schemaError \
+        .repartition(1) \
+        .write \
+        .option('header',True) \
+        .csv(xml_path+r"\\error\\schema_error_"+str(fileName)) \
+
+      # Moving the bad XMLs to the error dir
+      for row in df_schemaError.collect():
+        xmls_list_processing.pop(row['filename'])
+      
+      for i in xmls_list_processing:
+        try:
+          shutil.move(i,xml_path+r"error\\")
+        except Exception as e2:
+          shutil.rmtree(i)
+          f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
+          docto = f.write(str(e2))
+        if output_name != "":
+          shutil.rmtree(xml_path+r'\processing\\'+output_name)
+        f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
+        docto = f.write(str(e))
+        f.close()
+      
+      
 
     print('Writing the results to SAFX tables')
 
@@ -375,19 +404,7 @@ if len(xmls_list) > 0:
     con.close()
     spark.stop()
   except Exception as e:
-    for i in xmls_list_processing:
-      try:
-        shutil.move(i,xml_path+r"error\\")
-      except Exception as e2:
-        shutil.rmtree(i)
-        f = open(xml_path+r"error\\xml_error_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))+'.txt','a')
-        docto = f.write(str(e2))
-    if output_name != "":
-      shutil.rmtree(xml_path+r'\processing\\'+output_name)
-    f = open(xml_path+r"error\\xml_error_"+str(datetime.today().strftime("%Y%m%d%H%M%S"))+'.txt','a')
-    docto = f.write(str(e))
-    f.close()
-    raise e
+    raise Exception(e)
   # Move the files
 
 
