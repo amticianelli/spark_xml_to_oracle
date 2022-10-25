@@ -132,7 +132,6 @@ if len(xmls_list) > 0:
         .format("com.databricks.spark.xml") \
         .option("rootTag", "hierarchy") \
         .option("rowTag", "nfeProc") \
-        .withColumn("filename",input_file_name()) \
         .schema(newSchema) \
         .load(','.join(xmls_list_processing))
         #
@@ -140,6 +139,8 @@ if len(xmls_list) > 0:
         #.option("fetchsize","500")  \
         #.load('/content/xml/42200133009911009519550050000063501420824555.xml')
         #
+    
+    df = df.withColumn("filename",input_file_name())
 
     ## Verifying the schema
     if df.filter("NFe is null").count() > 0:
