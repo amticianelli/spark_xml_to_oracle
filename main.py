@@ -349,10 +349,10 @@ if len(xmls_list) > 0:
 
     if df_schemaError.rdd.count() > 0:
       df_schemaError \
+        .select("filename") \
         .repartition(1) \
         .write \
-        .option('header',True) \
-        .csv(xml_path+r"\\error\\schema_error_"+str(fileName)) \
+        .text(xml_path+r"\\error\\schema_error_"+str(fileName)) \
 
       # Moving the bad XMLs to the error dir
       for row in df_schemaError.collect():
