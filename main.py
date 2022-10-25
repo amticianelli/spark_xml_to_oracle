@@ -352,11 +352,16 @@ if len(xmls_list) > 0:
         .select("filename") \
         .repartition(1) \
         .write \
+        .option('header',True) \
         .text(xml_path+r"\\error\\schema_error_"+str(fileName)) \
 
       # Moving the bad XMLs to the error dir
-      for row in df_schemaError.collect():
-        xmls_list_processing.pop(row['filename'])
+      for row in df_schemaError.rdd.collect():
+        print(row['filename'])
+        try:
+          xmls_list_processing.remove(row['filename'])
+        except Exception as e:
+          print(e)
       
       for i in xmls_list_processing:
         try:
