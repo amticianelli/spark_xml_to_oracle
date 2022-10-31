@@ -362,20 +362,6 @@ if len(xmls_list) > 0:
       #  except Exception as e:
       #    print(e)
       
-      for i in xmls_list_processing:
-        try:
-          shutil.move(i,xml_path+r"error\\")
-        except Exception as e2:
-          shutil.rmtree(i)
-          f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
-          docto = f.write(str(e2))
-        if output_name != "":
-          shutil.rmtree(xml_path+r'\processing\\'+output_name)
-        f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
-        docto = f.write(str(e))
-        f.close()
-      
-      
 
     print('Writing the results to SAFX tables')
 
@@ -409,7 +395,18 @@ if len(xmls_list) > 0:
     con.close()
     spark.stop()
   except Exception as e:
-    raise Exception(e)
+    for i in xmls_list_processing:
+        try:
+          shutil.move(i,xml_path+r"error\\")
+        except Exception as e2:
+          shutil.rmtree(i)
+          f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
+          docto = f.write(str(e2))
+        if output_name != "":
+          shutil.rmtree(xml_path+r'\processing\\'+output_name)
+        f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
+        docto = f.write(str(e))
+        f.close()
   # Move the files
 
 
