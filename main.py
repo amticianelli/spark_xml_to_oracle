@@ -92,7 +92,7 @@ if len(xmls_list) > 0:
               .config('spark.yarn.queue','short') \
               .config('spark.executor.cores',Config.spark_core) \
               .config('spark.sql.shuffle.partitions','4') \
-              .config('spark.sql.session.timeZone','UTC') \
+              .config('spark.sql.session.timeZone','-03:00') \
               .master('local[*]') \
               .appName("ETL_xml_to_SAFX") \
               .getOrCreate()
@@ -353,15 +353,15 @@ if len(xmls_list) > 0:
         .repartition(1) \
         .write \
         .option('header',True) \
-        .text(xml_path+r"\\error\\schema_error_"+str(fileName)) \
+        .csv(xml_path+r"\\error\\schema_error_"+str(fileName)) \
 
       # Moving the bad XMLs to the error dir
-      for row in df_schemaError.rdd.collect():
-        print(row['filename'])
-        try:
-          xmls_list_processing.remove(row['filename'])
-        except Exception as e:
-          print(e)
+      #for row in df_schemaError.rdd.collect():
+      #  print(row['filename'])
+      #  try:
+      #    xmls_list_processing.remove(row['filename'])
+      #  except Exception as e:
+      #    print(e)
       
       for i in xmls_list_processing:
         try:
