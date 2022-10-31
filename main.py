@@ -143,11 +143,10 @@ if len(xmls_list) > 0:
     df = df.withColumn("filename",input_file_name())
 
     ## Verifying the schema
-    if df.filter("NFe is null").count() > 0:
-      df.show()
-      #raise 'Schema field error, please contact the support for adding the new fields'
-      df_schemaError = df.where('NFe is null')
-      df = df.where('NFe is not null')
+    df.show()
+    #raise 'Schema field error, please contact the support for adding the new fields'
+    df_schemaError = df.where('NFe is null')
+    df = df.where('NFe is not null')
 
 
     # Writing result to parquet
