@@ -92,7 +92,7 @@ if len(xmls_list) > 0:
               .config('spark.yarn.queue','short') \
               .config('spark.executor.cores',Config.spark_core) \
               .config('spark.sql.shuffle.partitions','4') \
-              .config('spark.sql.session.timeZone','-03:00') \
+              .config('spark.sql.session.timeZone','UTC') \
               .master('local[*]') \
               .appName("ETL_xml_to_SAFX") \
               .getOrCreate()
@@ -132,6 +132,7 @@ if len(xmls_list) > 0:
         .format("com.databricks.spark.xml") \
         .option("rootTag", "hierarchy") \
         .option("rowTag", "nfeProc") \
+        .option("columnNameOfCorruptRecord", "schemaError") \
         .schema(newSchema) \
         .load(','.join(xmls_list_processing))
         #
