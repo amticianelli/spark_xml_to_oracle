@@ -18,7 +18,8 @@ from pyspark.sql.functions import struct
 from pyspark.sql.functions import input_file_name
 from config.config import Config
 
-
+#
+output_name = ""
 
 # Config variables
 xml_path = Config.xml_path
@@ -132,7 +133,6 @@ if len(xmls_list) > 0:
         .format("com.databricks.spark.xml") \
         .option("rootTag", "hierarchy") \
         .option("rowTag", "nfeProc") \
-        .option("columnNameOfCorruptRecord", "schemaError") \
         .schema(newSchema) \
         .load(','.join(xmls_list_processing))
         #

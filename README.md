@@ -24,6 +24,7 @@ Necessary tools:
     - Download the file winutils.exe and hadoop.dll e move to a local directory: https://github.com/cdarlint/winutils
     - Create an Environment Variable called: SPARK_HOME, and point it to the extracted directory with the spark binaries and winutils files donwloaded previously
     - Download Spark XML source, and move it to the spark Jars diretory in SPARK_HOME: https://repo1.maven.org/maven2/com/databricks/spark-xml_2.10/0.2.0/spark-xml_2.10-0.2.0.jar
+    - https://repo1.maven.org/maven2/com/databricks/spark-xml_2.13/0.14.0/spark-xml_2.13-0.14.0.jar
     - Download Oracle JDBC driver, and move it to the spark Jars diretory in SPARK_HOME: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
     - Manually install findspark using: python setup.py install
     - Copy the files winutils.exe and hadoop.dll to the folder: C:\Windows\System32
