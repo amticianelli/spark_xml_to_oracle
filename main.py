@@ -4,7 +4,7 @@ import findspark
 import shutil
 from query import xmlToOracle
 from datetime import datetime
-
+from deepdiff import DeepDiff
 # tornar o pyspark "importável"
 #findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
 
@@ -18,8 +18,6 @@ from pyspark.sql.functions import struct
 from pyspark.sql.functions import input_file_name
 from config.config import Config
 
-# /
-output_name = ""
 
 # Config variables
 xml_path = Config.xml_path
@@ -59,12 +57,6 @@ def setCodDocto(docto_number):
   f.write(str(docto_number))
   f.close()
 
-def schema_diff(schema1, schema2):
-
-    return {
-        'fields_in_main_not_error': set(schema1) - set(schema2),
-        'fields_in_error_not_main': set(schema2) - set(schema1)
-    }
 
 # Map all files in directory
 
@@ -108,39 +100,19 @@ if len(xmls_list) > 0:
 
     spark.sparkContext.setLogLevel("WARN")
 
-    """```
-    from pyspark.sql import SparkSession,SQLContext
-    sql_jar="/path/to/sql_jar_file/sqljdbc42.jar"
-    spark_snow_jar="/usr/.../snowflake/spark-snowflake_2.11-2.5.5-spark_2.3.jar"
-    snow_jdbc_jar="/usr/.../snowflake/snowflake-jdbc-3.10.3.jar"
-    oracle_jar="/usr/path/to/oracle_jar_file//v12/jdbc/lib/oracle6.jar"
-    spark=(SparkSession
-    .builder
-    .master('yarn')
-    .appName('Spark job new_job')
-    .config('spark.driver.memory','10g')
-    .config('spark.submit.deployMode','client')
-    .config('spark.executor.memory','15g')
-    .config('spark.executor.cores',4)
-    .config('spark.yarn.queue','short')
-    .config('spark.jars','{},{},{},{}'.frmat(sql_jar,spark_snow_jar,snow_jdbc_jar,oracle_jar))
-    .enableHiveSupport()
-    .getOrCreate())
-    ```
-    """
-
     # Load XMLs in dataframe
 
     # Load schema
     json_f = open(schema_path)
 
-    newSchema = StructType.fromJson(json.load(json_f))
+    json_schema = json.load(json_f)
+    newSchema = StructType.fromJson(json_schema)
 
     df = spark.read \
         .format("com.databricks.spark.xml") \
         .option("rootTag", "hierarchy") \
         .option("rowTag", "nfeProc") \
-        .schema(newSchema) \
+        .option("inferSchema", "false") \
         .load(','.join(xmls_list_processing))
         #
         
@@ -175,19 +147,15 @@ if len(xmls_list) > 0:
        
       xmls_list_schemaerror = []
       for row in df_schemaError.rdd.collect():
-        schemaErrorFile = row['filename']
+        schemaErrorFile = row['filename'].replace('file:/','')
         errorFileName = schemaErrorFile[schemaErrorFile.rfind('/')+1:]
-        xmls_list_schemaerror.append(schemaErrorFile)
+        xmls_list_schemaerror.append(r""+xml_path+r'processing\\'+errorFileName)
 
         # Removing files
         for i in xmls_list_processing:
           if errorFileName in i:
-            try:
-              shutil.move(i,xml_path+r"error\\")
               xmls_list_processing.remove(i)
-            except Exception as e:
-              print('Already existent file: ' + i)
-              os.remove(i)
+           
 
       df_schemaError_dummy = spark.read \
         .format("com.databricks.spark.xml") \
@@ -196,10 +164,40 @@ if len(xmls_list) > 0:
         .load(','.join(xmls_list_schemaerror))
 
       # Comparing schemas
-      error_schema = df_schemaError_dummy.schema.json()
-      f = open(xml_path+r"error\\schema_diff_batch.txt",'w')
-      f.write(schema_diff(newSchema,error_schema))
+      error_schema: dict = json.loads(df_schemaError_dummy.schema.json())
+      merged_schema = json_schema.copy()
+      correct_schema: dict = json_schema.copy()
+      merged_schema.update(error_schema)
+
+      #print('Error {}:'.format(error_schema))
+      #print('Correct {}:'.format(correct_schema))
+      #print('Merged {}:'.format(merged_schema))
+
+      f = open(schema_path,'w')
+      f.write("{}".format(json.dumps(merged_schema, indent=2)))
       f.close()
+
+
+      # 
+
+      #print('Type of: {} and {}'.format(type(error_schema),type(correct_schema)))
+      #f = open(xml_path+r"error\\schema_diff_batch.txt",'w')
+      #json_object = json.loads(schema_diff(newSchema,error_schema))
+      #json_object = DeepDiff(correct_schema ,error_schema, ignore_order=True)
+      #print('DeepDiff out Type of: {}'.format(type(json_object)))
+      #json_object = json.loads(json_object.to_json())
+      #f.write("{}".format(json.dumps(json_object, indent=12)))
+      #f.close()
+
+      # Removing files
+      for i in xmls_list_schemaerror:
+        try:
+          shutil.move(i,xml_path+r"error\\")
+        except Exception as e:
+          print('Already existent file: ' + i)
+          os.remove(i)
+
+    exit(0)
 
     # Returning Mastersaf DW tables
     # Adjustment requested by Jorge to remove an especific estab (08/15/2022)

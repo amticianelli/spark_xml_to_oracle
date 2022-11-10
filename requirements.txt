@@ -1,2 +1,4 @@
 findspark
 pyspark
+deep
+deepdiff
