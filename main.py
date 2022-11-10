@@ -18,7 +18,7 @@ from pyspark.sql.functions import struct
 from pyspark.sql.functions import input_file_name
 from config.config import Config
 
-#
+# /
 output_name = ""
 
 # Config variables
@@ -58,6 +58,13 @@ def setCodDocto(docto_number):
   f = open(xml_path+'/num_controle_counter.txt','w')
   f.write(str(docto_number))
   f.close()
+
+def schema_diff(schema1, schema2):
+
+    return {
+        'fields_in_main_not_error': set(schema1) - set(schema2),
+        'fields_in_error_not_main': set(schema2) - set(schema1)
+    }
 
 # Map all files in directory
 
@@ -154,6 +161,45 @@ if len(xmls_list) > 0:
     output_name = 'xml_processing_'+fileName+'.parquet'
     df.write.parquet(xml_path+r'\processing\\'+output_name)
     df = spark.read.parquet(xml_path+r'\processing\\'+output_name)
+
+    # Show bad schema
+    if df_schemaError.rdd.count() > 0:
+      print('There are differences in the schema')
+      df_schemaError \
+        .select("filename") \
+        .repartition(1) \
+        .write \
+        .option('header',True) \
+        .csv(xml_path+r"\\error\\schema_error_"+str(fileName)) \
+
+       
+      xmls_list_schemaerror = []
+      for row in df_schemaError.rdd.collect():
+        schemaErrorFile = row['filename']
+        errorFileName = schemaErrorFile[schemaErrorFile.rfind('/')+1:]
+        xmls_list_schemaerror.append(schemaErrorFile)
+
+        # Removing files
+        for i in xmls_list_processing:
+          if errorFileName in i:
+            try:
+              shutil.move(i,xml_path+r"error\\")
+              xmls_list_processing.remove(i)
+            except Exception as e:
+              print('Already existent file: ' + i)
+              os.remove(i)
+
+      df_schemaError_dummy = spark.read \
+        .format("com.databricks.spark.xml") \
+        .option("rootTag", "hierarchy") \
+        .option("rowTag", "nfeProc") \
+        .load(','.join(xmls_list_schemaerror))
+
+      # Comparing schemas
+      error_schema = df_schemaError_dummy.schema.json()
+      f = open(xml_path+r"error\\schema_diff_batch.txt",'w')
+      f.write(schema_diff(newSchema,error_schema))
+      f.close()
 
     # Returning Mastersaf DW tables
     # Adjustment requested by Jorge to remove an especific estab (08/15/2022)
@@ -328,7 +374,6 @@ if len(xmls_list) > 0:
           .save()
 
     # Show bad NF
-
     if df_sql_capa_error.rdd.count() > 0:
       df_sql_capa_error \
         .repartition(1) \
@@ -347,13 +392,10 @@ if len(xmls_list) > 0:
 
       print('Number of itens with errors: '+str(df_sql_item_error.count()))
 
-    if df_schemaError.rdd.count() > 0:
-      df_schemaError \
-        .select("filename") \
-        .repartition(1) \
-        .write \
-        .option('header',True) \
-        .csv(xml_path+r"\\error\\schema_error_"+str(fileName)) \
+
+      
+        
+      
 
       # Moving the bad XMLs to the error dir
       #for row in df_schemaError.rdd.collect():
@@ -396,6 +438,7 @@ if len(xmls_list) > 0:
     con.close()
     spark.stop()
   except Exception as e:
+    print('Error in the execution')
     for i in xmls_list_processing:
         try:
           shutil.move(i,xml_path+r"error\\")
@@ -408,6 +451,7 @@ if len(xmls_list) > 0:
         f = open(xml_path+r"error\\xml_error_"+str(fileName)+'.txt','a')
         docto = f.write(str(e))
         f.close()
+        xmls_list_processing.remove(i)
   # Move the files
 
 
