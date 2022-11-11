@@ -4,7 +4,6 @@ import findspark
 import shutil
 from query import xmlToOracle
 from datetime import datetime
-from deepdiff import DeepDiff
 # tornar o pyspark "importável"
 #findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
 
