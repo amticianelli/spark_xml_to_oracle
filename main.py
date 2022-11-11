@@ -197,7 +197,9 @@ if len(xmls_list) > 0:
           print('Already existent file: ' + i)
           os.remove(i)
 
-    exit(0)
+    #####
+    ## Uncomment the line below to use only the XML conversion
+    #exit(0)
 
     # Returning Mastersaf DW tables
     # Adjustment requested by Jorge to remove an especific estab (08/15/2022)
