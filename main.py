@@ -111,13 +111,13 @@ if len(xmls_list) > 0:
         .format("com.databricks.spark.xml") \
         .option("rootTag", "hierarchy") \
         .option("rowTag", "nfeProc") \
-        .option("inferSchema", "false") \
+        .schema(newSchema) \
         .load(','.join(xmls_list_processing))
         #
         
         #.option("fetchsize","500")  \
         #.load('/content/xml/42200133009911009519550050000063501420824555.xml')
-        #
+        # .option("inferSchema", "false") \
     
     df = df.withColumn("filename",input_file_name())
 
