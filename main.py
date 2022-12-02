@@ -44,11 +44,11 @@ def getCodDocto():
   return docto
 
 
-def tagAvulsa(cpf: str,insc_estad: str,vlr: float):
+def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
   if cpf != None and insc_estad != None:
-    return 0
+    return float('0')
   else:
-    return vlr
+    return float(vlr)
 
 
 def setCodDocto(docto_number):
