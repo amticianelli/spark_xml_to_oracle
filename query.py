@@ -186,7 +186,7 @@ class xmlToOracle:
             NFe.infNfe.emit.IE AS INSC_ESTADUAL,
             SUBSTR(NFe.infNfe.emit.Xnome,1,50) AS NOME_FANTASIA,
             SUBSTR(NFe.infNfe.emit.enderEmit.xLgr,1,50) AS ENDERECO,
-            NFe.infNfe.emit.enderEmit.nro AS NUM_ENDERECO,
+            SUBSTR(NFe.infNfe.emit.enderEmit.nro,1,10) AS NUM_ENDERECO,
             SUBSTR(NFe.infNfe.emit.enderEmit.XBairro,1,20) AS BAIRRO,
             NFe.infNfe.emit.enderEmit.Xmun AS CIDADE,
             NFe.infNfe.emit.enderEmit.UF AS UF,
