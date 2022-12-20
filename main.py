@@ -30,18 +30,20 @@ password= Config.password
 
 # Read Cod Docto number position (UDF)
 def getCodDocto():
-  docto = 900000061429
-  if(os.path.exists(xml_path+'/num_controle_counter.txt')):
-    f = open(xml_path+'/num_controle_counter.txt','r')
-    docto = f.readline()
-    f.close()
-  else:
-    # Create the position file if is doesn't exist
-    f = open(xml_path+'/num_controle_counter.txt','w')
-    f.write('900000061429')
-    f.close()
-  
-  return docto
+  df = spark.read \
+        .format("jdbc") \
+        .option('driver',driver) \
+        .option('url',jdbc_string) \
+        .option('user',user) \
+        .option('password',password) \
+        .option("fetchsize","500")  \
+        .option('query',"""
+                          SELECT NUM_DOCTO+1 AS NUM_DOCTO FROM MSAF.NUM_DOCTO
+                        """) \
+        .load()\
+        .cache()
+
+  return df.first().get("NUM_DOCTO")
 
 
 def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
@@ -52,9 +54,21 @@ def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
 
 
 def setCodDocto(docto_number):
-  f = open(xml_path+'/num_controle_counter.txt','w')
-  f.write(str(docto_number))
-  f.close()
+  df = spark.sql("""
+  SELECT MAX(NUM_DOCTO) AS NUM_DOCTO FROM DF_CAPA
+  """)
+
+  df.write \
+          .format("jdbc") \
+          .option('driver',driver) \
+          .option('url',jdbc_string) \
+          .option('user',user) \
+          .option('password',password) \
+          .option('dbtable','MSAF.NUM_DOCTO') \
+          .mode('overwrite') \
+          .save()
+
+
 
 
 # Map all files in directory
@@ -307,6 +321,7 @@ if len(xmls_list) > 0:
     # Visao de capa
     df.createOrReplaceTempView('XML_RAW_CAPA')
     df_sql_capa = spark.sql(xmlToOracle.spark_capa)
+    df_sql_capa.createOrReplaceTempView('DF_CAPA')
 
     
 
