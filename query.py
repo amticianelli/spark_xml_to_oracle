@@ -28,7 +28,7 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2)),'.'),','),15,'0') AS VLR_PRODUTO,
             LPAD(REPLACE(REPLACE(STRING(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2)),'.'),','),15,'0') AS VLR_TOT_NOTA, 
             'N' AS SITUACAO,
-            (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+getDoctoPython()  AS NUM_CONTROLE_DOCTO, -- Create sequence
+            (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+(SELECT NUM_CONTROLE_DOCTO FROM NUM_DOCTO) AS NUM_CONTROLE_DOCTO, -- Create sequence
             '3' AS IND_FATURA,
             protNFe.infProt.chNFe AS NUM_AUTENTIC_NFE,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,

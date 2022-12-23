@@ -28,23 +28,6 @@ driver = Config.driver
 user = Config.user
 password= Config.password
 
-# Read Cod Docto number position (UDF)
-def getCodDocto():
-  df = spark.read \
-        .format("jdbc") \
-        .option('driver',driver) \
-        .option('url',jdbc_string) \
-        .option('user',user) \
-        .option('password',password) \
-        .option("fetchsize","500")  \
-        .option('query',"""
-                          SELECT NUM_DOCTO+1 AS NUM_DOCTO FROM MSAF.NUM_DOCTO
-                        """) \
-        .load()\
-        .cache()
-
-  return df.first().get("NUM_DOCTO")
-
 
 def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
   if cpf != None and insc_estad != None:
@@ -53,7 +36,7 @@ def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
     return 0.0 if vlr is None else float(vlr)
 
 
-def setCodDocto(docto_number):
+def setCodDocto(spark):
   df = spark.sql("""
   SELECT MAX(NUM_DOCTO) AS NUM_DOCTO FROM DF_CAPA
   """)
@@ -67,9 +50,6 @@ def setCodDocto(docto_number):
           .option('dbtable','MSAF.NUM_DOCTO') \
           .mode('overwrite') \
           .save()
-
-
-
 
 # Map all files in directory
 
@@ -304,8 +284,27 @@ if len(xmls_list) > 0:
     
 
     # Setting functions as an UDF
-    spark.udf.register("getDoctoPython",getCodDocto)
+    #spark.udf.register("getDoctoPython",getCodDocto) ## DEPRECATED
     spark.udf.register("setTagAvulsa",tagAvulsa,FloatType())
+
+    # Getting value for NUM_CONTROLE_DOCTO function
+
+    df_docto = spark.read \
+        .format("jdbc") \
+        .option('driver',driver) \
+        .option('url',jdbc_string) \
+        .option('user',user) \
+        .option('password',password) \
+        .option("fetchsize","500")  \
+        .option('query',"""
+                          SELECT NUM_DOCTO+1 AS NUM_DOCTO FROM MSAF.NUM_DOCTO
+                        """) \
+        .load()\
+        .cache()
+
+    df_docto.createOrReplaceTempView('NUM_DOCTO')
+
+    
 
     # Visao de pessoa fisica juridica
     df_x04.createOrReplaceTempView('X04_PESSOA_FIS_JUR')
@@ -444,7 +443,7 @@ if len(xmls_list) > 0:
 
     # Get docto position and record it to the text file
     capa_docto = getCodDocto()
-    setCodDocto(str(int(capa_docto)+df_sql_capa.count()))
+    setCodDocto(spark)
 
 
     # Close connections
