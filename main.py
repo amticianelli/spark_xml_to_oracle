@@ -442,7 +442,6 @@ if len(xmls_list) > 0:
 
 
     # Get docto position and record it to the text file
-    capa_docto = getCodDocto()
     setCodDocto(spark)
 
 
