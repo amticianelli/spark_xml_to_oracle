@@ -38,7 +38,7 @@ def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
 
 def setCodDocto(spark):
   df = spark.sql("""
-  SELECT MAX(NUM_DOCTO) AS NUM_DOCTO FROM DF_CAPA
+  SELECT MAX(NUM_CONTROLE_DOCTO) AS NUM_DOCTO FROM DF_CAPA
   """)
 
   df.write \
