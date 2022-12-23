@@ -480,4 +480,4 @@ if len(xmls_list) > 0:
     #shutil.move(i,xml_path+r'\processing\\')
 
   # Removing parquet file
-  shutil.rmtree(xml_path+r'\processing\\'+output_name)
+  # shutil.rmtree(xml_path+r'\processing\\'+output_name)
