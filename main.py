@@ -285,6 +285,7 @@ if len(xmls_list) > 0:
 
     # Setting functions as an UDF
     #spark.udf.register("getDoctoPython",getCodDocto) ## DEPRECATED
+    #spark.udf.register("setTagAvulsa",tagAvulsa,FloatType())
     spark.udf.register("setTagAvulsa",tagAvulsa,FloatType())
 
     # Getting value for NUM_CONTROLE_DOCTO function

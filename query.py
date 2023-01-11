@@ -25,22 +25,22 @@ class xmlToOracle:
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,26,9) AS NUM_DOCFIS_REF,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,23,3) AS SERIE_DOCFIS_REF,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_SAIDA_REC, -- Reviewing
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2),'.'),','),17,'0') AS VLR_PRODUTO,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2),'.'),','),17,'0') AS VLR_TOT_NOTA, 
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2),'.'),','),17,'0') AS VLR_PRODUTO,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2),'.'),','),17,'0') AS VLR_TOT_NOTA, 
             'N' AS SITUACAO,
             (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+(SELECT NUM_DOCTO FROM NUM_DOCTO) AS NUM_CONTROLE_DOCTO, -- Create sequence
             '3' AS IND_FATURA,
             protNFe.infProt.chNFe AS NUM_AUTENTIC_NFE,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_ISEN_ICMS),2),'.'),','),17,'0') AS BASE_ISEN_ICMS,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_OUTR_ICMS),2),'.'),','),17,'0') AS BASE_OUTR_ICMS,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_IPI),2),'.'),','),17,'0') AS BASE_OUTR_IPI,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_ISEN_ICMS),2),'.'),','),17,'0') AS BASE_ISEN_ICMS,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_OUTR_ICMS),2),'.'),','),17,'0') AS BASE_OUTR_ICMS,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,XI.BASE_IPI),2),'.'),','),17,'0') AS BASE_OUTR_IPI,
             '55' AS COD_MODELO_COTEPE,
             CASE 
                 WHEN NFe.infNfe.emit.CPF IS NOT NULL AND NFe.infNfe.emit.IE IS NOT NULL THEN 'S' 
                 ELSE NULL
             END AS IND_NF_REG_ESPECIAL,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
             LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
@@ -98,8 +98,8 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(col.prod.qCom,'.'),','),11,'0') AS QUANTIDADE,
             NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_MEDIDA,
             LPAD(col.prod.NCM,8,'0') AS COD_NBM,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vUnCom),2),'.'),','),17,'0') AS VLR_UNIT,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd),2),'.'),','),17,'0') AS VLR_ITEM,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vUnCom),2),'.'),','),17,'0') AS VLR_UNIT,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd),2),'.'),','),17,'0') AS VLR_ITEM,
             NVL(CASE 
                 WHEN col.imposto.ICMS.ICMS00.orig IS NOT NULL THEN col.imposto.ICMS.ICMS00.orig
                 WHEN col.imposto.ICMS.ICMS10.orig IS NOT NULL THEN col.imposto.ICMS.ICMS10.orig
@@ -121,16 +121,16 @@ class xmlToOracle:
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '90' ELSE '41' END AS COD_SITUACAO_B,
             '00003' AS COD_FEDERAL,
             CASE WHEN col.imposto.ICMS.ICMS00.vicms > 0 THEN '3' ELSE '2' END AS TRIB_ICMS,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
                 + coalesce(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST,col.imposto.ICMS.ICMS30.vICMSST,col.imposto.ICMS.ICMS90.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN900.vICMSST,0)
                 + coalesce(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST,col.imposto.ICMS.ICMS30.vFCPST,col.imposto.ICMS.ICMS90.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN900.vFCPST,0)
             ),2),'.'),','),17,'0') AS BASE_ICMS,
             '3' AS TRIB_IPI,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
                 + coalesce(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST,col.imposto.ICMS.ICMS30.vICMSST,col.imposto.ICMS.ICMS90.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN900.vICMSST,0)
                 + coalesce(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST,col.imposto.ICMS.ICMS30.vFCPST,col.imposto.ICMS.ICMS90.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN900.vFCPST,0)
             ),2),'.'),','),17,'0') AS BASE_IPI,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd - NVL(col.prod.vDesc,0) + NVL(col.imposto.IPI.IPITrib.vIPI,0) + NVL(col.prod.vOutro,0) + NVL(col.prod.vFrete,0) + NVL(col.prod.vSeg,0) 
                 + coalesce(col.imposto.ICMS.ICMS10.vICMSST,col.imposto.ICMS.ICMS70.vICMSST,col.imposto.ICMS.ICMS30.vICMSST,col.imposto.ICMS.ICMS90.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN201.vICMSST,col.imposto.ICMS.ICMSSN900.vICMSST,0)
                 + coalesce(col.imposto.ICMS.ICMS10.vFCPST,col.imposto.ICMS.ICMS70.vFCPST,col.imposto.ICMS.ICMS30.vFCPST,col.imposto.ICMS.ICMS90.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN201.vFCPST,col.imposto.ICMS.ICMSSN900.vFCPST,0)
             ),2),'.'),','),17,'0') AS VLR_CONTAB_ITEM,
@@ -140,7 +140,7 @@ class xmlToOracle:
             'N' AS IND_BEM_PATR,
             --col.prod.uCom AS COD_UND_PADRAO,
             NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_UND_PADRAO,
-            LPAD(REPLACE(REPLACE(ROUND(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
             '03' AS COD_TRIB_IPI 
         FROM XML_RAW_ITEM
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
