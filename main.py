@@ -29,7 +29,7 @@ user = Config.user
 password= Config.password
 
 
-def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
+def tagAvulsa(cpf: str,insc_estad: str,vlr: float):
   if cpf != None and insc_estad != None:
     return 0.0
   else:
