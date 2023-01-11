@@ -33,7 +33,7 @@ def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
   if cpf != None and insc_estad != None:
     return 0.0
   else:
-    return 0.0 if vlr is None else round(float(vlr),2)
+    return 0.0 if vlr is None else "{:.2f}".format(vlr)
 
 
 def setCodDocto(spark):
