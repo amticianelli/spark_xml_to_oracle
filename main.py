@@ -29,11 +29,11 @@ user = Config.user
 password= Config.password
 
 
-def tagAvulsa(cpf: str,insc_estad: str,vlr: float):
+def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
   if cpf != None and insc_estad != None:
     return 0.0
   else:
-    return 0.0 if vlr is None else "{:.2f}".format(vlr)
+    return 0.0 if vlr is None else "{:.2f}".format(float(vlr))
 
 
 def setCodDocto(spark):
