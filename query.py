@@ -95,10 +95,10 @@ class xmlToOracle:
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,26,9) AS NUM_DOCFIS_REF,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,23,3) AS SERIE_DOCFIS_REF,
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP,
-            LPAD(REPLACE(REPLACE(col.prod.qCom,'.'),','),11,'0') AS QUANTIDADE,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(DOUBLE(col.prod.qCom),6),'.'),','),17,'0') AS QUANTIDADE,
             NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_MEDIDA,
             LPAD(col.prod.NCM,8,'0') AS COD_NBM,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vUnCom),2),'.'),','),17,'0') AS VLR_UNIT,
+            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vUnCom),4),'.'),','),19,'0') AS VLR_UNIT,
             LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,col.prod.vProd),2),'.'),','),17,'0') AS VLR_ITEM,
             NVL(CASE 
                 WHEN col.imposto.ICMS.ICMS00.orig IS NOT NULL THEN col.imposto.ICMS.ICMS00.orig
