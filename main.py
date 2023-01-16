@@ -298,7 +298,7 @@ if len(xmls_list) > 0:
         .option('password',password) \
         .option("fetchsize","500")  \
         .option('query',"""
-                          SELECT NUM_DOCTO+1 AS NUM_DOCTO FROM MSAF.NUM_DOCTO
+                          SELECT NUM_DOCTO AS NUM_DOCTO FROM MSAF.NUM_DOCTO
                         """) \
         .load()\
         .cache()
