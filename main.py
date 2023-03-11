@@ -6,6 +6,7 @@ from query import xmlToOracle
 from datetime import datetime
 # tornar o pyspark "importável"
 #findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
+import fileinput
 
 findspark.init()
 
@@ -27,6 +28,14 @@ jdbc_string = Config.jdbc_string
 driver = Config.driver
 user = Config.user
 password= Config.password
+
+def replaceCTETag(filepath):
+  with fileinput.FileInput(filepath, inplace=True) as file:
+    for line in file:
+      print(line \
+        .replace('CTe','NFe') \
+        .replace('infCTe','infNFe') \
+        .replace('cte','nfe'), end='')
 
 
 def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
@@ -60,14 +69,18 @@ for f in os.listdir(xml_path+r"landing\\"):
   if os.path.isfile(os.path.join(xml_path+r"landing\\", f)):
     xmls_list.append(r""+xml_path+r"landing\\"+f)
     xmls_list_processing.append(r""+xml_path+r'processing\\'+f)
+    
 
 print("Files to be processed: "+str(len(xmls_list)))
 
 # Moving files to processing dir
 
 try:
-  for i in xmls_list:
-    shutil.move(i,xml_path+r'processing\\')
+  for file in xmls_list:
+    # Treat CTe invoinces
+    replaceCTETag(file)
+    shutil.move(file,xml_path+r'processing\\')
+    
 except Exception as e:
   print('File already exists')
 
@@ -117,6 +130,7 @@ if len(xmls_list) > 0:
 
     ## Verifying the schema
     df.show()
+    raise BaseException('Saida')
     #raise 'Schema field error, please contact the support for adding the new fields'
     df_schemaError = df.where('NFe is null')
     df = df.where('NFe is not null')

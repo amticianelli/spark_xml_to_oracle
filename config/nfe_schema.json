@@ -3561,6 +3561,14 @@
                                                          }
                                                       },
                                                       {
+                                                         "name":"nCT",
+                                                         "type":"string",
+                                                         "nullable":true,
+                                                         "metadata":{
+                                                            
+                                                         }
+                                                      },
+                                                      {
                                                          "name":"serie",
                                                          "type":"string",
                                                          "nullable":true,
@@ -3682,6 +3690,14 @@
                                  },
                                  {
                                     "name":"nNF",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
+                                 {
+                                    "name":"nCT",
                                     "type":"string",
                                     "nullable":true,
                                     "metadata":{

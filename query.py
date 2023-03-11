@@ -7,7 +7,10 @@ class xmlToOracle:
             ESTAB.COD_ESTAB AS COD_ESTAB,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
-            'NFE' AS COD_DOCTO,
+            CASE 
+                WHEN NFe.infNfe.ide.nNF IS NULL THEN 'CTE'
+                ELSE 'NFE'
+            END AS COD_DOCTO,
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
             NVL(X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
