@@ -130,8 +130,9 @@ if len(xmls_list) > 0:
 
     ## Verifying the schema
     df.show()
-    raise BaseException('Saida')
-    #raise 'Schema field error, please contact the support for adding the new fields'
+    
+    #raise BaseException('Saida')
+    
     df_schemaError = df.where('NFe is null')
     df = df.where('NFe is not null')
 
