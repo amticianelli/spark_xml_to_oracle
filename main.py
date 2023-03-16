@@ -37,6 +37,7 @@ def replaceCTETag(filepath):
         .replace('CTeOS','NFe') \
         .replace('cteOSProc','nfeProc') \
         .replace('infCTe','infNFe') \
+        .replace('infCte','infNFe') \
         .replace('cte','nfe'), end='')
 
 
