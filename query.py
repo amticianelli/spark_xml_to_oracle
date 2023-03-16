@@ -18,7 +18,7 @@ class xmlToOracle:
                 ELSE
                     'M'||SUBSTR(NFe.infNfe.emit.CPF,1,8) || SUBSTR(NFe.infNfe.emit.CPF,-4)
                 END)) AS COD_FIS_JUR,
-            LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
+            NVL(LPAD(NFe.infNfe.ide.nNF,9,'0'),LPAD(NFe.infNfe.ide.nCT,9,'0')) AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_EMISSAO,
             '1' AS COD_CLASS_DOC_FIS,
@@ -53,7 +53,7 @@ class xmlToOracle:
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
             AND XML_RAW_CAPA.NFe.infNfe.det[0].prod.CFOP = MSAFCFOP.cod_cfo
-        JOIN (
+        LEFT JOIN (
             SELECT 
                 COD_EMPRESA,
                 COD_ESTAB,
@@ -71,7 +71,6 @@ class xmlToOracle:
             AND XI.COD_ESTAB = ESTAB.COD_ESTAB
             AND XI.NUM_DOCFIS = LPAD(XML_RAW_CAPA.NFe.infNfe.ide.nNF,9,'0')
         WHERE 1=1
-            
     """
 
     spark_item = """

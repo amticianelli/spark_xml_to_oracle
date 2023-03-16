@@ -37,7 +37,7 @@ def replaceCTETag(filepath):
         .replace('CTeOS','NFe') \
         .replace('cteOSProc','nfeProc') \
         .replace('infCTe','infNFe') \
-        .replace('infCte','infNFe') \
+        .replace('infCte','infNFe') \ 
         .replace('cte','nfe'), end='')
 
 
@@ -299,6 +299,10 @@ if len(xmls_list) > 0:
     print('Number of headers to be processed: '+str(df.count()))
     df.limit(10).show()
     print('Number of itens to be processed: '+str(df_result_item.count()))
+
+
+    print('Itens in DF')
+    df_result_item.limit(10).show()
     
 
     # Setting functions as an UDF
