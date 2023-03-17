@@ -300,6 +300,9 @@ if len(xmls_list) > 0:
     df.limit(10).show()
     print('Number of itens to be processed: '+str(df_result_item.count()))
 
+    # Change to CTe
+    df.createOrReplaceTempView('CAPA_RAW_CTe')
+
 
     print('Itens in DF')
     df_result_item.limit(10).show()
