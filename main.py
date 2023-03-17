@@ -301,7 +301,7 @@ if len(xmls_list) > 0:
     print('Number of itens to be processed: '+str(df_result_item.count()))
 
     # Change to CTe
-    df.createOrReplaceTempView('CAPA_RAW_CTe')
+    df.createOrReplaceTempView('XML_RAW_CAPA')
 
 
     print('Itens in DF')
@@ -344,7 +344,6 @@ if len(xmls_list) > 0:
 
 
     # Visao de capa
-    df.createOrReplaceTempView('XML_RAW_CAPA')
     df_sql_capa = spark.sql(xmlToOracle.spark_capa)
     df_sql_capa.createOrReplaceTempView('DF_CAPA')
 
@@ -373,6 +372,10 @@ if len(xmls_list) > 0:
 
     print('Number of headers to be inserted: '+str(df_sql_capa.count()))
     print('Number of items to be inserted: '+str(df_sql_item.count()))
+
+    print('Number of headers with validation error: '+str(df_sql_capa_error.count()))
+    print('Number of items with validation error: '+str(df_sql_item_error.count()))
+    
     
 
     print('Writing the results to temp tables')

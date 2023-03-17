@@ -83,7 +83,7 @@ class xmlToOracle:
         ) XI ON 1=1
             AND XI.COD_EMPRESA = ESTAB.COD_EMPRESA
             AND XI.COD_ESTAB = ESTAB.COD_ESTAB
-            AND XI.NUM_DOCFIS = LPAD(XML_RAW_CAPA.NFe.infNfe.ide.nNF,9,'0')
+            AND XI.NUM_DOCFIS = LPAD(NVL(XML_RAW_CAPA.NFe.infNfe.ide.nNF,XML_RAW_CAPA.NFe.infNfe.ide.nCT),9,'0')
         WHERE 1=1
     """
 
@@ -136,15 +136,15 @@ class xmlToOracle:
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
-            '' AS IND_BEM_PATR,
-            '' AS COD_UND_PADRAO,
-            '' AS VLR_DESCONTO,
-            '' AS COD_TRIB_IPI
-        FROM CAPA_RAW_CTe
+            '@' AS IND_BEM_PATR,
+            '@' AS COD_UND_PADRAO,
+            '@' AS VLR_DESCONTO,
+            '@' AS COD_TRIB_IPI
+        FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
-            AND ESTAB.CGC = CAPA_RAW_CTe.NFe.infNfe.dest.CNPJ
+            AND ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
