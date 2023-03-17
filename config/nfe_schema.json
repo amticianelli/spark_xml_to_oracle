@@ -256,6 +256,62 @@
                      "type":"struct",
                      "fields":[
                         {
+                           "name":"imp",
+                           "type":{
+                              "type":"array",
+                              "elementType":{
+                                 "type":"struct",
+                                 "fields":[
+                                    {
+                                       "name":"ICMS",
+                                       "type":{
+                                          "type":"array",
+                                          "elementType":{
+                                             "type":"struct",
+                                             "fields":[
+                                                {
+                                                   "name":"ICMS00",
+                                                   "type":{
+                                                      "type":"array",
+                                                      "elementType":{
+                                                         "type":"struct",
+                                                         "fields":[
+                                                            {
+                                                               "name":"vICMS",
+                                                               "type":"string",
+                                                               "nullable":true,
+                                                               "metadata":{
+                                                                  
+                                                               }
+                                                            }
+                                                         ]
+                                                      },
+                                                      "containsNull":true
+                                                   },
+                                                   "nullable":true,
+                                                   "metadata":{
+                                                      
+                                                   }
+                                                }
+                                             ]
+                                          },
+                                          "containsNull":true
+                                       },
+                                       "nullable":true,
+                                       "metadata":{
+                                          
+                                       }
+                                    }
+                                 ]
+                              },
+                              "containsNull":true
+                           },
+                           "nullable":true,
+                           "metadata":{
+                              
+                           }
+                        },
+                        {
                            "name":"vPrest",
                            "type":{
                               "type":"array",
@@ -3496,6 +3552,14 @@
                            "type":{
                               "type":"struct",
                               "fields":[
+                                 {
+                                    "name":"CFOP",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
                                  {
                                     "name":"cMunFim",
                                     "type":"string",
