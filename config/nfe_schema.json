@@ -258,53 +258,41 @@
                         {
                            "name":"imp",
                            "type":{
-                              "type":"array",
-                              "elementType":{
-                                 "type":"struct",
-                                 "fields":[
-                                    {
-                                       "name":"ICMS",
-                                       "type":{
-                                          "type":"array",
-                                          "elementType":{
-                                             "type":"struct",
-                                             "fields":[
-                                                { 
-                                                   "name":"ICMS00",
-                                                   "type":{
-                                                      "type":"array",
-                                                      "elementType":{
-                                                         "type":"struct",
-                                                         "fields":[
-                                                            {
-                                                               "name":"vICMS",
-                                                               "type":"string",
-                                                               "nullable":true,
-                                                               "metadata":{
-                                                                  
-                                                               }
-                                                            }
-                                                         ]
-                                                      },
-                                                      "containsNull":true
-                                                   },
-                                                   "nullable":true,
-                                                   "metadata":{
-                                                      
+                              "type":"struct",
+                              "fields":[
+                                 {
+                                    "name":"ICMS",
+                                    "type":{
+                                       "type":"struct",
+                                       "fields":[
+                                          {
+                                             "name":"ICMS00",
+                                             "type":{
+                                                "type":"struct",
+                                                "fields":[
+                                                   {
+                                                      "name":"vICMS",
+                                                      "type":"string",
+                                                      "nullable":true,
+                                                      "metadata":{
+                                                         
+                                                      }
                                                    }
-                                                }
-                                             ]
-                                          },
-                                          "containsNull":true
-                                       },
-                                       "nullable":true,
-                                       "metadata":{
-                                          
-                                       }
+                                                ]
+                                             },
+                                             "nullable":true,
+                                             "metadata":{
+                                                
+                                             }
+                                          }
+                                       ]
+                                    },
+                                    "nullable":true,
+                                    "metadata":{
+                                       
                                     }
-                                 ]
-                              },
-                              "containsNull":true
+                                 }
+                              ]
                            },
                            "nullable":true,
                            "metadata":{
