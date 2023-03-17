@@ -31,13 +31,13 @@ class xmlToOracle:
                 WHEN NFe.infNfe.ide.nCT IS NULL THEN
                     LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2),'.'),','),17,'0')
                 ELSE
-                    LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0')
+                    LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0')
             END AS VLR_PRODUTO,
             CASE 
                 WHEN NFe.infNfe.ide.nCT IS NULL THEN
                     LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2),'.'),','),17,'0')
                 ELSE
-                    LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0')
+                    LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0')
             END AS VLR_TOT_NOTA,
             'N' AS SITUACAO,
             (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+(SELECT NUM_DOCTO FROM NUM_DOCTO) AS NUM_CONTROLE_DOCTO, -- Create sequence
@@ -117,8 +117,8 @@ class xmlToOracle:
             '1000000' AS QUANTIDADE,
             NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_MEDIDA,
             '84229090' AS COD_NBM,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),19,'0') AS VLR_UNIT,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0') AS VLR_ITEM,
+            LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),19,'0') AS VLR_UNIT,
+            LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0') AS VLR_ITEM,
             '0' AS COD_SITUACAO_A,
             CASE 
                 WHEN NVL(NFe.infNfe.imp.ICMS.ICMS00.vICMS,0) > 0 THEN '90'
@@ -129,10 +129,10 @@ class xmlToOracle:
                 WHEN NVL(NFe.infNfe.imp.ICMS.ICMS00.vICMS,0) > 0 THEN '3'
             ELSE '2'
             END AS TRIB_ICMS,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0') AS BASE_ICMS,
+            LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0') AS BASE_ICMS,
             '3' AS TRIB_IPI,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0') AS BASE_IPI,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0') AS VLR_CONTAB_ITEM,
+            LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0') AS BASE_IPI,
+            LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0') AS VLR_CONTAB_ITEM,
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
