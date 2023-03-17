@@ -140,11 +140,11 @@ class xmlToOracle:
             '' AS COD_UND_PADRAO,
             '' AS VLR_DESCONTO,
             '' AS COD_TRIB_IPI
-        FROM XML_RAW_CAPA
+        FROM XML_RAW_ITEM
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
-            AND ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
+            AND ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
