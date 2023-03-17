@@ -302,21 +302,17 @@
                         {
                            "name":"vPrest",
                            "type":{
-                              "type":"array",
-                              "elementType":{
-                                 "type":"struct",
-                                 "fields":[
-                                    {
-                                       "name":"vTPrest",
-                                       "type":"string",
-                                       "nullable":true,
-                                       "metadata":{
-                                          
-                                       }
+                              "type":"struct",
+                              "fields":[
+                                 {
+                                    "name":"vTPrest",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
                                     }
-                                 ]
-                              },
-                              "containsNull":true
+                                 }
+                              ]
                            },
                            "nullable":true,
                            "metadata":{
