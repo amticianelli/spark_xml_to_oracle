@@ -18,18 +18,27 @@ class xmlToOracle:
                 ELSE
                     'M'||SUBSTR(NFe.infNfe.emit.CPF,1,8) || SUBSTR(NFe.infNfe.emit.CPF,-4)
                 END)) AS COD_FIS_JUR,
-            NVL(LPAD(NFe.infNfe.ide.nNF,9,'0'),LPAD(NFe.infNfe.ide.nCT,9,'0')) AS NUM_DOCFIS,
+            LPAD(NVL(NFe.infNfe.ide.nNF,NFe.infNfe.ide.nCT),9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_EMISSAO,
             '1' AS COD_CLASS_DOC_FIS,
             ''||NFe.infNfe.ide.mod AS COD_MODELO,
-            --''||XML_RAW_CAPA.NFe.infNfe.det[0].prod.CFOP AS COD_CFO,
             NVL(MSAFCFOP.novo_cfo,'NP') AS COD_CFO,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,26,9) AS NUM_DOCFIS_REF,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,23,3) AS SERIE_DOCFIS_REF,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_SAIDA_REC, -- Reviewing
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2),'.'),','),17,'0') AS VLR_PRODUTO,
-            LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2),'.'),','),17,'0') AS VLR_TOT_NOTA, 
+            CASE 
+                WHEN NFe.infNfe.ide.nCT IS NULL THEN
+                    LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vProd),2),'.'),','),17,'0')
+                ELSE
+                    LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0')
+            END AS VLR_PRODUTO,
+            CASE 
+                WHEN NFe.infNfe.ide.nCT IS NULL THEN
+                    LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vNF),2),'.'),','),17,'0')
+                ELSE
+                    LPAD(REPLACE(REPLACE(FORMAT_NUMBER(NFe.infNfe.Vprest.vTPrest,2),'.'),','),17,'0')
+            END AS VLR_TOT_NOTA,
             'N' AS SITUACAO,
             (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+(SELECT NUM_DOCTO FROM NUM_DOCTO) AS NUM_CONTROLE_DOCTO, -- Create sequence
             '3' AS IND_FATURA,
@@ -44,7 +53,12 @@ class xmlToOracle:
                 ELSE NULL
             END AS IND_NF_REG_ESPECIAL,
             LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
-            LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO
+            LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO,
+            '2' AS IND_TP_FRETE,
+            NFe.infNfe.ide.UFIni AS UF_ORIG_DEST,
+            NFe.infNfe.ide.UFFim AS UF_DESTINO,
+            SUBSTR(NFe.infNfe.ide.cMunIni,3,5) AS COD_MUNICIPIO_ORIG,
+            SUBSTR(NFe.infNfe.ide.cMunFim,3,5) AS COD_MUNICIPIO_DEST
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
@@ -280,7 +294,12 @@ class xmlToOracle:
         COD_MODELO_COTEPE,
         IND_NF_REG_ESPECIAL,
         VLR_DESCONTO,
-        VLR_ABAT_NTRIBUTADO
+        VLR_ABAT_NTRIBUTADO,
+        IND_TP_FRETE,
+        UF_ORIG_DEST,
+        UF_DESTINO,
+        COD_MUNICIPIO_ORIG,
+        COD_MUNICIPIO_DEST
         )
         SELECT * FROM MSAF.SAFX07_TEMP
     """

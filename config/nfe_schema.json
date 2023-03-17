@@ -256,6 +256,30 @@
                      "type":"struct",
                      "fields":[
                         {
+                           "name":"vPrest",
+                           "type":{
+                              "type":"array",
+                              "elementType":{
+                                 "type":"struct",
+                                 "fields":[
+                                    {
+                                       "name":"vTPrest",
+                                       "type":"string",
+                                       "nullable":true,
+                                       "metadata":{
+                                          
+                                       }
+                                    }
+                                 ]
+                              },
+                              "containsNull":true
+                           },
+                           "nullable":true,
+                           "metadata":{
+                              
+                           }
+                        },
+                        {
                            "name":"_Id",
                            "type":"string",
                            "nullable":true,
@@ -3473,6 +3497,38 @@
                               "type":"struct",
                               "fields":[
                                  {
+                                    "name":"cMunFim",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
+                                 {
+                                    "name":"cMunIni",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
+                                 {
+                                    "name":"UFFim",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
+                                 {
+                                    "name":"UFIni",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
+                                 {
                                     "name":"NFref",
                                     "type":{
                                        "type":"array",
@@ -4491,6 +4547,7 @@
                               
                            }
                         }
+                     
                      ]
                   },
                   "nullable":true,
