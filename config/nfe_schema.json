@@ -269,7 +269,7 @@
                                           "elementType":{
                                              "type":"struct",
                                              "fields":[
-                                                {
+                                                { 
                                                    "name":"ICMS00",
                                                    "type":{
                                                       "type":"array",
