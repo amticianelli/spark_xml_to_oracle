@@ -89,6 +89,7 @@ try:
     except Exception as e2:
       print('Error in replace: '+str(e2))
       xmls_list.pop(idx)
+      xmls_list_processing.pop(idx)
     
 except Exception as e:
   print('Error: '+str(e))
