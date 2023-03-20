@@ -7,9 +7,10 @@ class xmlToOracle:
             ESTAB.COD_ESTAB AS COD_ESTAB,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
-            CASE 
-                WHEN NFe.infNfe.ide.nNF IS NULL THEN 'CTE'
-                ELSE 'NFE'
+            CASE
+                WHEN NFe.infNfe.ide.nNF IS NOT NULL THEN 'NFE'
+                WHEN NFe.infNfe.ide.mod = '57' THEN 'YD'
+                ELSE 'YJ'
             END AS COD_DOCTO,
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
             NVL(X04.COD_FIS_JUR,(CASE 
@@ -58,7 +59,8 @@ class xmlToOracle:
             NFe.infNfe.ide.UFIni AS UF_ORIG_DEST,
             NFe.infNfe.ide.UFFim AS UF_DESTINO,
             SUBSTR(NFe.infNfe.ide.cMunIni,3,5) AS COD_MUNICIPIO_ORIG,
-            SUBSTR(NFe.infNfe.ide.cMunFim,3,5) AS COD_MUNICIPIO_DEST
+            SUBSTR(NFe.infNfe.ide.cMunFim,3,5) AS COD_MUNICIPIO_DEST,
+            NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
@@ -107,7 +109,7 @@ class xmlToOracle:
                 END)) AS COD_FIS_JUR,
             LPAD(NFe.infNfe.ide.nCT,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
-            '5' AS IND_PRODUTO,
+            '8' AS IND_PRODUTO,
             NVL(MSAFNCM.material,'NP') AS COD_PRODUTO,
             '1' AS NUM_ITEM,
             NVL(MSAFCFOP.novo_cfo,'NP') AS COD_CFO,
@@ -353,7 +355,8 @@ class xmlToOracle:
         UF_ORIG_DEST,
         UF_DESTINO,
         COD_MUNICIPIO_ORIG,
-        COD_MUNICIPIO_DEST
+        COD_MUNICIPIO_DEST,
+        COD_NATUREZA_OP
         )
         SELECT * FROM MSAF.SAFX07_TEMP
     """
