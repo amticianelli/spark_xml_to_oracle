@@ -83,8 +83,6 @@ try:
   for file in xmls_list:
     # Treat CTe invoices
     replaceCTETag(file)
-
-  for file in xmls_list:
     shutil.move(file,xml_path+r'processing\\')
     
 except Exception as e:
