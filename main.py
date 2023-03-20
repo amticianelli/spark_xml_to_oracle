@@ -88,7 +88,7 @@ try:
     shutil.move(file,xml_path+r'processing\\')
     
 except Exception as e:
-  print('Error: '+e)
+  print('Error: '+str(e))
 
 # Starting local session and import data do Spark
 
