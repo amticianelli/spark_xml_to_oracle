@@ -30,7 +30,7 @@ user = Config.user
 password= Config.password
 
 def replaceCTETag(filepath):
-  with fileinput.FileInput(filepath, inplace=True) as file:
+  with fileinput.FileInput(filepath, inplace=True ) as file:
     for line in file:
       print(line \
         .replace('CTe','NFe') \
@@ -80,10 +80,15 @@ print("Files to be processed: "+str(len(xmls_list)))
 # Moving files to processing dir
 
 try:
-  for file in xmls_list:
+  current_idx = None
+  for idx,file in enumerate(xmls_list):
     # Treat CTe invoices
-    replaceCTETag(file)
-    shutil.move(file,xml_path+r'processing\\')
+    try:
+      replaceCTETag(file)
+      shutil.move(file,xml_path+r'processing\\')
+    except Exception as e2:
+      print('Error in replace: '+str(e2))
+      xmls_list.pop(idx)
     
 except Exception as e:
   print('Error: '+str(e))
