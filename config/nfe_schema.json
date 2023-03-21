@@ -572,6 +572,26 @@
                            }
                         },
                         {
+                           "name":"rem",
+                           "type":{
+                              "type":"struct",
+                              "fields":[
+                                 {
+                                    "name":"CNPJ",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 }
+                              ]
+                           },
+                           "nullable":true,
+                           "metadata":{
+                              
+                           }
+                        },      
+                        {
                            "name":"dest",
                            "type":{
                               "type":"struct",
