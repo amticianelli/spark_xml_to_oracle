@@ -31,7 +31,7 @@ password= Config.password
 
 def replaceCTETag(filepath):
   
-  with open(filepath,'r', errors='replace') as file:
+  with open(filepath,'r', errors='replace', encoding='utf-8') as file:
     data = file.read()
     data = data \
             .replace('CTe','NFe') \
@@ -44,19 +44,6 @@ def replaceCTETag(filepath):
 
   with open(filepath, 'w') as file:
     file.write(data)
-
-
-
-  with fileinput.FileInput(filepath, inplace=True ) as file:
-    for line in file:
-      print(line \
-        .replace('CTe','NFe') \
-        .replace('CTeOS','NFe') \
-        .replace('NFeOS','NFe') \
-        .replace('cteOSProc','nfeProc') \
-        .replace('infCTe','infNFe') \
-        .replace('infCte','infNFe') \
-        .replace('cte','nfe'), end='')
 
 
 def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
