@@ -97,7 +97,6 @@ print("Files to be processed: "+str(len(xmls_list)))
 # Moving files to processing dir
 
 try:
-  current_idx = None
   for idx,file in enumerate(xmls_list):
     # Treat CTe invoices
     replaceCTETag(file)

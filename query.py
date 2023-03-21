@@ -41,7 +41,7 @@ class xmlToOracle:
                     LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0')
             END AS VLR_TOT_NOTA,
             'N' AS SITUACAO,
-            (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NFe.infNfe.ide.nNF ASC))+(SELECT NUM_DOCTO FROM NUM_DOCTO) AS NUM_CONTROLE_DOCTO, -- Create sequence
+            (row_number() over (partition by DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') order by NVL(NFe.infNfe.ide.nNF,NFe.infNfe.ide.nCT) ASC))+(SELECT NUM_DOCTO FROM NUM_DOCTO) AS NUM_CONTROLE_DOCTO, -- Create sequence
             '3' AS IND_FATURA,
             protNFe.infProt.chNFe AS NUM_AUTENTIC_NFE,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
@@ -138,8 +138,8 @@ class xmlToOracle:
             '70' AS COD_SITUACAO_PIS,
             '70' AS COD_SITUACAO_COFINS,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DAT_LANC_PIS_COFINS,
-            '@' AS IND_BEM_PATR,
-            '@' AS COD_UND_PADRAO,
+            'N' AS IND_BEM_PATR,
+            NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_UND_PADRAO,
             '@' AS VLR_DESCONTO,
             '@' AS COD_TRIB_IPI
         FROM XML_RAW_CAPA
