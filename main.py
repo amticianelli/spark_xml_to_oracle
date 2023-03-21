@@ -34,6 +34,7 @@ def replaceCTETag(filepath):
   with open(filepath,'r', errors='replace', encoding='utf-8') as file:
     data = file.read()
     data = data \
+            .replace('\ufeff','') \
             .replace('CTe','NFe') \
             .replace('CTeOS','NFe') \
             .replace('NFeOS','NFe') \
@@ -42,8 +43,8 @@ def replaceCTETag(filepath):
             .replace('infCte','infNFe') \
             .replace('cte','nfe')
 
-  with open(filepath, 'w') as file:
-    file.write(data.encode("utf-8"))
+  with open(filepath, 'w', errors='replace', encoding='utf-8') as file:
+    file.write(data)
 
 
 def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
