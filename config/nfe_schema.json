@@ -590,26 +590,6 @@
                            "metadata":{
                               
                            }
-                        },
-                        {
-                           "name":"toma",
-                           "type":{
-                              "type":"struct",
-                              "fields":[
-                                 {
-                                    "name":"CNPJ",
-                                    "type":"string",
-                                    "nullable":true,
-                                    "metadata":{
-                                       
-                                    }
-                                 }
-                              ]
-                           },
-                           "nullable":true,
-                           "metadata":{
-                              
-                           }
                         },      
                         {
                            "name":"dest",
@@ -3249,6 +3229,27 @@
                                  ]
                               },
                               "containsNull":true
+                           },
+                           "nullable":true,
+                           "metadata":{
+                              
+                           }
+                        }
+                        ,
+                        {
+                           "name":"toma",
+                           "type":{
+                              "type":"struct",
+                              "fields":[
+                                 {
+                                    "name":"CNPJ",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 }
+                              ]
                            },
                            "nullable":true,
                            "metadata":{
