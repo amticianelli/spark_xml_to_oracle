@@ -67,14 +67,16 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
                 (
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
                     OR
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
+                    OR
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NVL(XML_RAW_CAPA.NFe.infNfe.det[0].prod.CFOP,NFe.infNfe.ide.CFOP) = MSAFCFOP.cod_cfo
-        JOIN (
+        LEFT JOIN (
             SELECT 
                 COD_EMPRESA,
                 COD_ESTAB,
@@ -153,9 +155,11 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
                 (
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
                     OR
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
+                    OR
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
@@ -246,6 +250,8 @@ class xmlToOracle:
                     ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
                     OR
                     ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
+                    OR
+                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
