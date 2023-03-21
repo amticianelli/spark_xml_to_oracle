@@ -67,11 +67,11 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
                 (
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
+                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
                     OR
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
+                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
                     OR
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
+                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
@@ -155,11 +155,11 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
                 (
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
+                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
                     OR
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
+                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
                     OR
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
+                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
