@@ -43,7 +43,7 @@ def replaceCTETag(filepath):
             .replace('cte','nfe')
 
   with open(filepath, 'w') as file:
-    file.write(data)
+    file.write(data.encode("utf-8"))
 
 
 def tagAvulsa(cpf: str,insc_estad: str,vlr: str):
