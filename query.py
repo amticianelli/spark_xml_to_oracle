@@ -3,8 +3,8 @@ class xmlToOracle:
 
     spark_capa = """
         SELECT
-            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_drem.COD_EMPRESA) AS COD_EMPRESA,
-            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_drem.COD_ESTAB) AS COD_ESTAB,
+            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA) AS COD_EMPRESA,
+            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB) AS COD_ESTAB,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
             CASE
@@ -89,16 +89,16 @@ class xmlToOracle:
                 COD_ESTAB,
                 NUM_DOCFIS
         ) XI ON 1=1
-            AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_drem.COD_EMPRESA)
-            AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_drem.COD_ESTAB)
+            AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA)
+            AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB)
             AND XI.NUM_DOCFIS = LPAD(NVL(XML_RAW_CAPA.NFe.infNfe.ide.nNF,XML_RAW_CAPA.NFe.infNfe.ide.nCT),9,'0')
         WHERE 1=1
     """
 
     spark_item_cte = """
         SELECT
-            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_drem.COD_EMPRESA) AS COD_EMPRESA,
-            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_drem.COD_ESTAB) AS COD_ESTAB,
+            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA) AS COD_EMPRESA,
+            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB) AS COD_ESTAB,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_FISCAL,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
@@ -170,8 +170,8 @@ class xmlToOracle:
 
     spark_item = """
         SELECT
-            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_drem.COD_EMPRESA) AS COD_EMPRESA,
-            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_drem.COD_ESTAB) AS COD_ESTAB,
+            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA) AS COD_EMPRESA,
+            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB) AS COD_ESTAB,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_FISCAL,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
