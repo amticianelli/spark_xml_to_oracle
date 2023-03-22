@@ -66,12 +66,13 @@ class xmlToOracle:
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
+                ESTAB.CGC = 
                 (
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
-                    OR
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
-                    OR
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
+                    CASE 
+                        WHEN XML_RAW_CAPA.NFe.infNfe.dest.CNPJ IN (SELECT CGC FROM ESTABELECIMENTO) THEN XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
+                        WHEN XML_RAW_CAPA.NFe.infNfe.toma.CNPJ IN (SELECT CGC FROM ESTABELECIMENTO) THEN XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
+                        ELSE XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
+                    END
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
@@ -154,12 +155,13 @@ class xmlToOracle:
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
+                ESTAB.CGC = 
                 (
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
-                    OR
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
-                    OR
-                    ESTAB.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
+                    CASE 
+                        WHEN XML_RAW_CAPA.NFe.infNfe.dest.CNPJ IN (SELECT CGC FROM ESTABELECIMENTO) THEN XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
+                        WHEN XML_RAW_CAPA.NFe.infNfe.toma.CNPJ IN (SELECT CGC FROM ESTABELECIMENTO) THEN XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
+                        ELSE XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
+                    END
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
@@ -246,12 +248,13 @@ class xmlToOracle:
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
         LEFT JOIN ESTABELECIMENTO ESTAB ON 1=1
             AND 
+                ESTAB.CGC = 
                 (
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
-                    OR
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
-                    OR
-                    ESTAB.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
+                    CASE 
+                        WHEN XML_RAW_ITEM.NFe.infNfe.dest.CNPJ IN (SELECT CGC FROM ESTABELECIMENTO) THEN XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
+                        WHEN XML_RAW_ITEM.NFe.infNfe.toma.CNPJ IN (SELECT CGC FROM ESTABELECIMENTO) THEN XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
+                        ELSE XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
+                    END
                 )
             AND ESTAB.COD_ESTAB LIKE 'BR%'
         LEFT JOIN MSAFCFOP ON 1=1
