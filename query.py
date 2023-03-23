@@ -106,7 +106,7 @@ class xmlToOracle:
                 WHEN NFe.infNfe.ide.mod = '57' THEN 'YD'
                 ELSE 'YJ'
             END AS COD_DOCTO,
-            '1' AS IND_FIS_JUR,
+            NVL(X04.IND_FIS_JUR,'1') AS IND_FIS_JUR,
             NVL(X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
                     'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,8) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
