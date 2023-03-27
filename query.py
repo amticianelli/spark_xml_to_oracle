@@ -124,7 +124,7 @@ class xmlToOracle:
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP,
             '1000000' AS QUANTIDADE,
             NVL(MSAFNCM.cod_und_padrao,'NP') AS COD_MEDIDA,
-            '84229090' AS COD_NBM,
+            MSAFNCM.cod_ncm AS COD_NBM,
             LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),19,'0') AS VLR_UNIT,
             LPAD(REPLACE(REPLACE(NFe.infNfe.Vprest.vTPrest,'.'),','),17,'0') AS VLR_ITEM,
             '0' AS COD_SITUACAO_A,
@@ -163,7 +163,8 @@ class xmlToOracle:
         LEFT JOIN MSAFCFOP ON 1=1
             AND NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFNCM ON 1=1
-            AND MSAFNCM.cod_ncm = '84229090'
+            AND MSAFNCM.cod_ncm = (CASE NFe.infNfe.ide.mod WHEN '57' THEN '1050113' ELSE '104011200' END)
+
         WHERE 1=1
             AND NFe.infNfe.ide.nCT IS NOT NULL
     """
