@@ -590,6 +590,46 @@
                            "metadata":{
                               
                            }
+                        },
+                        {
+                           "name":"exped",
+                           "type":{
+                              "type":"struct",
+                              "fields":[
+                                 {
+                                    "name":"CNPJ",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 }
+                              ]
+                           },
+                           "nullable":true,
+                           "metadata":{
+                              
+                           }
+                        },
+                        {
+                           "name":"receb",
+                           "type":{
+                              "type":"struct",
+                              "fields":[
+                                 {
+                                    "name":"CNPJ",
+                                    "type":"string",
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 }
+                              ]
+                           },
+                           "nullable":true,
+                           "metadata":{
+                              
+                           }
                         },      
                         {
                            "name":"dest",
@@ -3577,6 +3617,46 @@
                            "type":{
                               "type":"struct",
                               "fields":[
+                                 {
+                                    "name":"toma3",
+                                    "type":{
+                                       "type":"struct",
+                                       "fields":[
+                                          {
+                                             "name":"toma",
+                                             "type":"string",
+                                             "nullable":true,
+                                             "metadata":{
+                                                
+                                             }
+                                          }
+                                       ]
+                                    },
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
+                                 {
+                                    "name":"toma4",
+                                    "type":{
+                                       "type":"struct",
+                                       "fields":[
+                                          {
+                                             "name":"toma",
+                                             "type":"string",
+                                             "nullable":true,
+                                             "metadata":{
+                                                
+                                             }
+                                          }
+                                       ]
+                                    },
+                                    "nullable":true,
+                                    "metadata":{
+                                       
+                                    }
+                                 },
                                  {
                                     "name":"CFOP",
                                     "type":"string",

@@ -359,7 +359,7 @@ if len(xmls_list) > 0:
 
     ### Separando registros de capa
     df_sql_capa_error = df_sql_capa \
-                          .where("COD_CFO = 'NP'")
+                          .where("COD_CFO = 'NP' OR COD_ESTAB IS NULL")
     
     df_sql_capa = df_sql_capa \
                           .where("COD_CFO != 'NP'")
@@ -371,7 +371,7 @@ if len(xmls_list) > 0:
 
     ### Seprando registros de item
     df_sql_item_error = df_sql_item \
-                              .where("COD_CFO = 'NP' OR COD_PRODUTO = 'NP' OR COD_NATUREZA_OP = 'NP'")
+                              .where("COD_CFO = 'NP' OR COD_PRODUTO = 'NP' OR COD_NATUREZA_OP = 'NP' OR COD_ESTAB IS NULL")
     
     df_sql_item =       df_sql_item \
                               .where("COD_CFO != 'NP' AND COD_PRODUTO != 'NP' AND COD_NATUREZA_OP != 'NP'")

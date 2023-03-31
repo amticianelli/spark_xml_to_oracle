@@ -3,8 +3,8 @@ class xmlToOracle:
 
     spark_capa = """
         SELECT
-            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA) AS COD_EMPRESA,
-            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB) AS COD_ESTAB,
+            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA) AS COD_EMPRESA,
+            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB) AS COD_ESTAB,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
             CASE
@@ -23,7 +23,7 @@ class xmlToOracle:
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_EMISSAO,
             '1' AS COD_CLASS_DOC_FIS,
-            ''||NFe.infNfe.ide.mod AS COD_MODELO,
+            NFe.infNfe.ide.mod AS COD_MODELO,
             NVL(MSAFCFOP.novo_cfo,'NP') AS COD_CFO,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,26,9) AS NUM_DOCFIS_REF,
             ''||SUBSTR(NFe.infNfe.ide.NFref[0].refNFe,23,3) AS SERIE_DOCFIS_REF,
@@ -67,12 +67,33 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO estab_dest ON 1=1
             AND estab_dest.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
             AND estab_dest.COD_ESTAB LIKE 'BR%'
+            AND 
+                (
+                    NFe.infNfe.ide.toma3.toma = '3'
+                    OR
+                    NFe.infNfe.ide.mod = '55'
+                )
         LEFT JOIN ESTABELECIMENTO estab_rem ON 1=1
             AND estab_rem.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
             AND estab_rem.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND 
+                (
+                    NFe.infNfe.ide.toma4.toma = '4'
+                    AND
+                    estab_toma.cod_estab LIKE '33009911%'
+                )
+        LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
+            AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.exped.CNPJ
+            AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '1'
+        LEFT JOIN ESTABELECIMENTO estab_receb ON 1=1
+            AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.receb.CNPJ
+            AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NVL(XML_RAW_CAPA.NFe.infNfe.det[0].prod.CFOP,NFe.infNfe.ide.CFOP) = MSAFCFOP.cod_cfo
         LEFT JOIN (
@@ -89,16 +110,17 @@ class xmlToOracle:
                 COD_ESTAB,
                 NUM_DOCFIS
         ) XI ON 1=1
-            AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA)
-            AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB)
+            AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA)
+            AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB)
             AND XI.NUM_DOCFIS = LPAD(NVL(XML_RAW_CAPA.NFe.infNfe.ide.nNF,XML_RAW_CAPA.NFe.infNfe.ide.nCT),9,'0')
         WHERE 1=1
     """
 
     spark_item_cte = """
         SELECT
-            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA) AS COD_EMPRESA,
-            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB) AS COD_ESTAB,
+            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA) AS COD_EMPRESA,
+            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB) AS COD_ESTAB,
+            '1' AS MOVTO_E_S,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_FISCAL,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
@@ -154,12 +176,32 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO estab_dest ON 1=1
             AND estab_dest.CGC = XML_RAW_CAPA.NFe.infNfe.dest.CNPJ
             AND estab_dest.COD_ESTAB LIKE 'BR%'
+            AND 
+                (
+                    NFe.infNfe.ide.toma3.toma = '3'
+                    OR
+                    NFe.infNfe.ide.mod = '55'
+                )
         LEFT JOIN ESTABELECIMENTO estab_rem ON 1=1
             AND estab_rem.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
             AND estab_rem.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND (
+                    NFe.infNfe.ide.toma4.toma = '4'
+                    AND
+                    estab_toma.cod_estab LIKE '33009911%'
+                )
+        LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
+            AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.exped.CNPJ
+            AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '1'
+        LEFT JOIN ESTABELECIMENTO estab_receb ON 1=1
+            AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.receb.CNPJ
+            AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFNCM ON 1=1
@@ -171,8 +213,8 @@ class xmlToOracle:
 
     spark_item = """
         SELECT
-            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA) AS COD_EMPRESA,
-            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB) AS COD_ESTAB,
+            coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA) AS COD_EMPRESA,
+            coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB) AS COD_ESTAB,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_FISCAL,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
@@ -246,12 +288,32 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO estab_dest ON 1=1
             AND estab_dest.CGC = XML_RAW_ITEM.NFe.infNfe.dest.CNPJ
             AND estab_dest.COD_ESTAB LIKE 'BR%'
+            AND 
+                (
+                    NFe.infNfe.ide.toma3.toma = '3'
+                    OR
+                    NFe.infNfe.ide.mod = '55'
+                )
         LEFT JOIN ESTABELECIMENTO estab_rem ON 1=1
             AND estab_rem.CGC = XML_RAW_ITEM.NFe.infNfe.rem.CNPJ
             AND estab_rem.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.CGC = XML_RAW_ITEM.NFe.infNfe.toma.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND (
+                    NFe.infNfe.ide.toma4.toma = '4'
+                    AND
+                    estab_toma.cod_estab LIKE '33009911%'
+                )
+        LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
+            AND estab_toma.CGC = XML_RAW_ITEM.NFe.infNfe.exped.CNPJ
+            AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '1'
+        LEFT JOIN ESTABELECIMENTO estab_receb ON 1=1
+            AND estab_toma.CGC = XML_RAW_ITEM.NFe.infNfe.receb.CNPJ
+            AND estab_toma.COD_ESTAB LIKE 'BR%'
+            AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND XML_RAW_ITEM.col.prod.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFNCM ON 1=1
