@@ -239,6 +239,7 @@ if len(xmls_list) > 0:
                               OR
                               (CGC = '33009911046988' AND COD_ESTAB = 'BRBQ')
                             )
+                          AND COD_ESTAB != 'BRCR'
                   """) \
         .load() \
         .cache()
