@@ -120,7 +120,6 @@ class xmlToOracle:
         SELECT
             coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA) AS COD_EMPRESA,
             coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB) AS COD_ESTAB,
-            '1' AS MOVTO_E_S,
             DATE_FORMAT(CURRENT_DATE(),'yyyyMMdd') AS DATA_FISCAL,
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
