@@ -80,7 +80,7 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
-            AND 
+            AND (
                 (
                     NFe.infNfe.ide.toma4.toma = '4'
                     AND
@@ -91,7 +91,7 @@ class xmlToOracle:
                     NFe.infNfe.ide.toma3.toma IS NULL
                     AND
                     NFe.infNfe.ide.toma4.toma IS NULL
-                )
+                ))
         LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.exped.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
