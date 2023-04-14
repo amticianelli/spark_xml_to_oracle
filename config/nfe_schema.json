@@ -3649,6 +3649,14 @@
                                              "metadata":{
                                                 
                                              }
+                                          },
+                                          {
+                                             "name":"CNPJ",
+                                             "type":"string",
+                                             "nullable":true,
+                                             "metadata":{
+                                                
+                                             }
                                           }
                                        ]
                                     },
