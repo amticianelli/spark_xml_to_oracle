@@ -78,7 +78,7 @@ class xmlToOracle:
             AND estab_rem.COD_ESTAB LIKE 'BR%'
             AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
-            AND estab_toma.CGC = NVL(XML_RAW_CAPA.NFe.infNfe.toma.CNPJ,XML_RAW_CAPA.NFe.infNfe.toma4.CNPJ)
+            AND estab_toma.CGC = NVL(XML_RAW_CAPA.NFe.infNfe.toma.CNPJ,NFe.infNfe.ide.toma4.CNPJ)
             AND estab_toma.COD_ESTAB LIKE 'BR%'
             AND (
                 (
@@ -192,7 +192,7 @@ class xmlToOracle:
             AND estab_rem.COD_ESTAB LIKE 'BR%'
             AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
-            AND estab_toma.CGC = NVL(XML_RAW_CAPA.NFe.infNfe.toma.CNPJ,XML_RAW_CAPA.NFe.infNfe.toma4.CNPJ)
+            AND estab_toma.CGC = NVL(XML_RAW_CAPA.NFe.infNfe.toma.CNPJ,NFe.infNfe.ide.toma4.CNPJ)
             AND estab_toma.COD_ESTAB LIKE 'BR%'
             AND (
                 (
