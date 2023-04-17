@@ -79,25 +79,9 @@ class xmlToOracle:
             AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.COD_ESTAB LIKE 'BR%'
-            AND 
-                (
-                    estab_toma.CGC = NFe.infNfe.ide.toma4.CNPJ
-                    OR
-                    estab_toma.CGC = NFe.infNfe.toma.CNPJ
-                )
-            AND (
-                    (
-                        NFe.infNfe.ide.toma4.toma = '4'
-                        AND
-                        estab_toma.cod_estab LIKE '33009911%'
-                    )
-                OR
-                    (
-                        NFe.infNfe.ide.toma3.toma IS NULL
-                        AND
-                        NFe.infNfe.ide.toma4.toma IS NULL
-                    )
-                )
+            AND estab_toma.CGC = NFe.infNfe.ide.toma4.CNPJ     
+            AND NFe.infNfe.ide.toma4.toma = '4'
+            AND estab_toma.cod_estab LIKE '33009911%'
         LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.exped.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
