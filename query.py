@@ -76,12 +76,28 @@ class xmlToOracle:
         LEFT JOIN ESTABELECIMENTO estab_rem ON 1=1
             AND estab_rem.CGC = XML_RAW_CAPA.NFe.infNfe.rem.CNPJ
             AND estab_rem.COD_ESTAB LIKE 'BR%'
-            AND NFe.infNfe.ide.toma3.toma = '0'
+            AND XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.COD_ESTAB LIKE 'BR%'
-            AND estab_toma.CGC = NFe.infNfe.ide.toma4.CNPJ     
-            AND NFe.infNfe.ide.toma4.toma = '4'
-            AND estab_toma.cod_estab LIKE '33009911%'
+            AND 
+                (
+                    estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.ide.toma4.CNPJ
+                    OR
+                    estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
+                )
+            AND (
+                    (
+                        XML_RAW_CAPA.NFe.infNfe.ide.toma4.toma = '4'
+                        AND
+                        estab_toma.cod_estab LIKE '33009911%'
+                    )
+                OR
+                    (
+                        XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma IS NULL
+                        AND
+                        XML_RAW_CAPA.NFe.infNfe.ide.toma4.toma IS NULL
+                    )
+                )
         LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.exped.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
@@ -183,21 +199,37 @@ class xmlToOracle:
             AND NFe.infNfe.ide.toma3.toma = '0'
         LEFT JOIN ESTABELECIMENTO estab_toma ON 1=1
             AND estab_toma.COD_ESTAB LIKE 'BR%'
-            AND estab_toma.CGC = NFe.infNfe.ide.toma4.CNPJ     
-            AND NFe.infNfe.ide.toma4.toma = '4'
-            AND estab_toma.cod_estab LIKE '33009911%'
+            AND 
+                (
+                    estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.ide.toma4.CNPJ
+                    OR
+                    estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.toma.CNPJ
+                )
+            AND (
+                    (
+                        XML_RAW_CAPA.NFe.infNfe.ide.toma4.toma = '4'
+                        AND
+                        estab_toma.cod_estab LIKE '33009911%'
+                    )
+                OR
+                    (
+                        XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma IS NULL
+                        AND
+                        XML_RAW_CAPA.NFe.infNfe.ide.toma4.toma IS NULL
+                    )
+                )
         LEFT JOIN ESTABELECIMENTO estab_exped ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.exped.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
-            AND NFe.infNfe.ide.toma3.toma = '1'
+            AND XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma = '1'
         LEFT JOIN ESTABELECIMENTO estab_receb ON 1=1
             AND estab_toma.CGC = XML_RAW_CAPA.NFe.infNfe.receb.CNPJ
             AND estab_toma.COD_ESTAB LIKE 'BR%'
-            AND NFe.infNfe.ide.toma3.toma = '2'
+            AND XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
-            AND NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
+            AND XML_RAW_CAPA.NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFNCM ON 1=1
-            AND MSAFNCM.cod_ncm = (CASE NFe.infNfe.ide.mod WHEN '57' THEN '1050113' ELSE '104011200' END)
+            AND MSAFNCM.cod_ncm = (CASE XML_RAW_CAPA.NFe.infNfe.ide.mod WHEN '57' THEN '1050113' ELSE '104011200' END)
 
         WHERE 1=1
             AND NFe.infNfe.ide.nCT IS NOT NULL
