@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import findspark
 import shutil
 from query import xmlToOracle
@@ -140,7 +141,11 @@ if len(xmls_list) > 0:
     df = df.withColumn("filename",input_file_name())
 
     ## Verifying the schema
-    df.show()
+    if df.rdd.count() > 0:
+      df.show()
+    else:
+      print('Sem notas para importar')
+      sys.exit(0)
 
     #raise BaseException('Saida')
     
