@@ -215,8 +215,8 @@ class xmlToOracle:
             AND estab_exped.COD_ESTAB LIKE 'BR%'
             AND XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma = '1'
         LEFT JOIN ESTABELECIMENTO estab_receb ON 1=1
-            AND estab_exped.CGC = XML_RAW_CAPA.NFe.infNfe.receb.CNPJ
-            AND estab_exped.COD_ESTAB LIKE 'BR%'
+            AND estab_receb.CGC = XML_RAW_CAPA.NFe.infNfe.receb.CNPJ
+            AND estab_receb.COD_ESTAB LIKE 'BR%'
             AND XML_RAW_CAPA.NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND XML_RAW_CAPA.NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
