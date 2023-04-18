@@ -3,7 +3,7 @@ import os
 import sys
 import findspark
 import shutil
-from query_bkp import xmlToOracle
+from query import xmlToOracle
 from datetime import datetime
 # tornar o pyspark "importável"
 #findspark.add_packages('com.databricks:spark-xml_2.12:0.13.0')
@@ -144,10 +144,10 @@ if len(xmls_list) > 0:
     if df.rdd.count() > 0:
       df \
         .select(
-          "NFe.infNfe.ide.toma4.CNPJ as toma4",\
-          "NFe.infNfe.toma.CNPJ as CNPJ",\
-          "NFe.infNfe.ide.toma4.toma AS INDTOMA", \
-          "NFe.infNfe.ide.toma4 AS toma4geral"
+          "NFe.infNfe.ide.toma4.CNPJ",\
+          "NFe.infNfe.toma.CNPJ",\
+          "NFe.infNfe.ide.toma4.toma", \
+          "NFe.infNfe.ide.toma4"
               ) \
         .limit(10) \
         .show()
