@@ -142,7 +142,7 @@ if len(xmls_list) > 0:
 
     ## Verifying the schema
     if df.rdd.count() > 0:
-      df \
+      """df \
         .select(
           "NFe.infNfe.ide.toma4.CNPJ",\
           "NFe.infNfe.toma.CNPJ",\
@@ -151,6 +151,8 @@ if len(xmls_list) > 0:
               ) \
         .limit(10) \
         .show()
+        """
+      df.limit(10).show()
     else:
       print('Sem notas para importar')
       sys.exit(0)
