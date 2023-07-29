@@ -21,17 +21,23 @@ create or replace PACKAGE BODY ADEJO_SOUZAC_XML_CPAR IS
 
   FUNCTION PARAMETROS RETURN VARCHAR2 IS
 		pstr VARCHAR2(5000);
+    query_x04 VARCHAR2(5000);
   BEGIN
 
 		mcod_empresa := LIB_PARAMETROS.RECUPERAR('EMPRESA');
 		mcod_usuario := LIB_PARAMETROS.RECUPERAR('USUARIO');
 
+    query_x04 := 'SELECT DISTINCT CPF_CGC, CPF_CGC  FROM (WITH v1 AS (SELECT x04.*,RANK() OVER(PARTITION BY CPF_CGC ORDER BY VALID_FIS_JUR DESC,IND_FIS_JUR, IDENT_FIS_JUR DESC) AS POSICAO FROM MSAF.X04_PESSOA_FIS_JUR x04) SELECT * FROM v1 WHERE POSICAO = 1);'
+
   
 	  pstr := pstr||  'CFOP NatOp|CFOP NatOp|null|CFOP NatOp|TextListBox|Varchar2||0000|'||
                       'select distinct TO_CHAR(x2012.cod_cfo) cod_cfo, descricao from msaf.x2012_cod_fiscal x2012 order by 1;';
 
-      pstr := pstr||  'Produto|Produto|null|Produto|TextListBox|Varchar2||0000|'||
+    pstr := pstr||  'Produto|Produto|null|Produto|TextListBox|Varchar2||0000|'||
                       'SELECT distinct COD_NBM, DESCRICAO FROM MSAF.X2043_COD_NBM order by 1;';
+
+    pstr := pstr||  'CNPJ|CNPJ|null|CNPJ|TextListBox|Varchar2||0000|'||
+                      query_x04;
 
 
 

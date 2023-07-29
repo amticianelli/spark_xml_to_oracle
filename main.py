@@ -245,16 +245,20 @@ if len(xmls_list) > 0:
         .option('password',password) \
         .option("fetchsize","500")  \
         .option('query',"""
-                          SELECT * 
-                          FROM MSAF.ESTABELECIMENTO 
+                          SELECT 
+                            ESTAB.*,
+                            EST.UF
+                          FROM MSAF.ESTABELECIMENTO ESTAB
+                          JOIN ESTADO EST ON 1=1
+                            AND ESTAB.IDENT_ESTADO = EST.IDENT_ESTADO
                           WHERE 1=1
                           AND 
                             (
-                              (CGC != '33009911046988' AND COD_ESTAB != 'BRBX')
+                              (ESTAB.CGC != '33009911046988' AND ESTAB.COD_ESTAB != 'BRBX')
                               OR
-                              (CGC = '33009911046988' AND COD_ESTAB = 'BRBQ')
+                              (ESTAB.CGC = '33009911046988' AND ESTAB.COD_ESTAB = 'BRBQ')
                             )
-                          AND COD_ESTAB != 'BRCR'
+                          AND ESTAB.COD_ESTAB != 'BRCR'
                   """) \
         .load() \
         .cache()
@@ -272,8 +276,11 @@ if len(xmls_list) > 0:
                           WITH v1 AS (
                           SELECT 
                             x04.*,
+                            EST.UF,
                             RANK() OVER(PARTITION BY CPF_CGC ORDER BY VALID_FIS_JUR DESC,IND_FIS_JUR, IDENT_FIS_JUR DESC) AS POSICAO
                           FROM MSAF.X04_PESSOA_FIS_JUR x04
+                          JOIN MSAF.ESTADO EST ON 1=1
+                            AND x04.IDENT_ESTADO = EST.IDENT_ESTADO
                           )
                           SELECT * FROM v1 WHERE POSICAO = 1
                         """) \
@@ -305,11 +312,25 @@ if len(xmls_list) > 0:
         .option('query',xmlToOracle.oracle_param_produto) \
         .load()\
         .cache()
+    
+    # returning CFOP
+
+    df_cnpj = spark.read \
+        .format("jdbc") \
+        .option('driver',driver) \
+        .option('url',jdbc_string) \
+        .option('user',user) \
+        .option('password',password) \
+        .option("fetchsize","500")  \
+        .option('query',xmlToOracle.oracle_param_cnpj) \
+        .load()\
+        .cache()
 
 
     df_estab.createOrReplaceTempView('ESTABELECIMENTO')
     df_cfop.createOrReplaceTempView('MSAFCFOP')
     df_ncm.createOrReplaceTempView('MSAFNCM')
+    df_cnpj.createOrReplaceTempView('MSAFCNPJ')
 
 
     # Exploding itens

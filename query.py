@@ -13,12 +13,12 @@ class xmlToOracle:
                 ELSE 'YJ'
             END AS COD_DOCTO,
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
-            NVL(X04.COD_FIS_JUR,(CASE 
+            NVL(MSAFCNPJ.COD_FIS_JUR,NVL(X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
                     'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,8) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
                 ELSE
                     'M'||SUBSTR(NFe.infNfe.emit.CPF,1,8) || SUBSTR(NFe.infNfe.emit.CPF,-4)
-                END)) AS COD_FIS_JUR,
+                END))) AS COD_FIS_JUR,
             LPAD(NVL(NFe.infNfe.ide.nNF,NFe.infNfe.ide.nCT),9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_EMISSAO,
@@ -56,10 +56,10 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
             LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO,
             '2' AS IND_TP_FRETE,
-            NFe.infNfe.ide.UFIni AS UF_ORIG_DEST,
-            NFe.infNfe.ide.UFFim AS UF_DESTINO,
-            SUBSTR(NFe.infNfe.ide.cMunIni,3,5) AS COD_MUNICIPIO_ORIG,
-            SUBSTR(NFe.infNfe.ide.cMunFim,3,5) AS COD_MUNICIPIO_DEST,
+            COALESCE(X04_PARAM.UF,X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
+            NVL(estab_dest.UF,NFe.infNfe.ide.UFFim) AS UF_DESTINO,
+            NVL(X04_PARAM.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
+            NVL(estab_dest.cod_municipio,SUBSTR(NFe.infNfe.ide.cMunFim,3,5)) AS COD_MUNICIPIO_DEST,
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
@@ -84,7 +84,7 @@ class xmlToOracle:
                     (
                         NFe.infNfe.ide.toma4.toma = '4'
                         AND
-                        estab_toma.cod_estab LIKE '33009911%'
+                        estab_toma.CGC LIKE '33009911%'
                     )
                 OR
                     (
@@ -103,6 +103,10 @@ class xmlToOracle:
             AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NVL(NFe.infNfe.det[0].prod.CFOP,NFe.infNfe.ide.CFOP) = MSAFCFOP.cod_cfo
+        LEFT JOIN MSAFCNPJ ON 1=1
+            AND NFe.infNfe.dest.CNPJ = MSAFCNPJ.CNPJ
+        LEFT JOIN X04_PESSOA_FIS_JUR X04_PARAM ON 1-1
+            MSAFCNPJ.COD_FIS_JUR = X04_PARAM.COD_FIS_JUR
         LEFT JOIN (
             SELECT 
                 COD_EMPRESA,
@@ -199,7 +203,7 @@ class xmlToOracle:
                     (
                         NFe.infNfe.ide.toma4.toma = '4'
                         AND
-                        estab_toma.cod_estab LIKE '33009911%'
+                        estab_toma.CGC LIKE '33009911%'
                     )
                 OR
                     (
@@ -220,7 +224,6 @@ class xmlToOracle:
             AND NFe.infNfe.ide.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFNCM ON 1=1
             AND MSAFNCM.cod_ncm = (CASE NFe.infNfe.ide.mod WHEN '57' THEN '1050113' ELSE '104011200' END)
-
         WHERE 1=1
             AND NFe.infNfe.ide.nCT IS NOT NULL
     """
@@ -411,6 +414,19 @@ class xmlToOracle:
         where 1=1
             and par.nome_framework = 'ADEJO_SOUZAC_XML_CPAR'
             and det.nome_param     = 'CFOP NatOp'
+    """
+
+    oracle_param_cnpj = """
+        select distinct 
+            det.nome_param,
+            det.Conteudo CNPJ, 
+            det.valor cod_fis_jur
+        from msaf.fpar_param_det det
+        join msaf.fpar_parametros par on 1=1
+            and det.id_parametro   = par.id_parametros
+        where 1=1
+            and par.nome_framework = 'ADEJO_SOUZAC_XML_CPAR'
+            and det.nome_param     = 'CNPJ'
     """
 
     oracle_safx07 = """
