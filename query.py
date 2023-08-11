@@ -105,8 +105,8 @@ class xmlToOracle:
             AND NVL(NFe.infNfe.det[0].prod.CFOP,NFe.infNfe.ide.CFOP) = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFCNPJ ON 1=1
             AND NFe.infNfe.dest.CNPJ = MSAFCNPJ.CNPJ
-        LEFT JOIN X04_PESSOA_FIS_JUR X04_PARAM ON 1-1
-            MSAFCNPJ.COD_FIS_JUR = X04_PARAM.COD_FIS_JUR
+        LEFT JOIN X04_PESSOA_FIS_JUR X04_PARAM ON 1=1
+            AND MSAFCNPJ.COD_FIS_JUR = X04_PARAM.COD_FIS_JUR
         LEFT JOIN (
             SELECT 
                 COD_EMPRESA,
