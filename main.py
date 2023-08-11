@@ -247,7 +247,7 @@ if len(xmls_list) > 0:
         .option('query',"""
                           SELECT 
                             ESTAB.*,
-                            EST.UF
+                            EST.COD_ESTADO AS U
                           FROM MSAF.ESTABELECIMENTO ESTAB
                           JOIN ESTADO EST ON 1=1
                             AND ESTAB.IDENT_ESTADO = EST.IDENT_ESTADO
@@ -276,7 +276,7 @@ if len(xmls_list) > 0:
                           WITH v1 AS (
                           SELECT 
                             x04.*,
-                            EST.UF,
+                            EST.COD_ESTADO AS UF,
                             RANK() OVER(PARTITION BY CPF_CGC ORDER BY VALID_FIS_JUR DESC,IND_FIS_JUR, IDENT_FIS_JUR DESC) AS POSICAO
                           FROM MSAF.X04_PESSOA_FIS_JUR x04
                           JOIN MSAF.ESTADO EST ON 1=1
