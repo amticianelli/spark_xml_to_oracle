@@ -115,7 +115,8 @@ class xmlToOracle:
             GROUP BY
                 COD_EMPRESA,
                 COD_ESTAB,
-                NUM_DOCFIS
+                NUM_DOCFIS,
+                COD_FIS_JUR
         ) XI ON 1=1
             AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA)
             AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB)
