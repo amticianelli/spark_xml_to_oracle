@@ -247,7 +247,7 @@ if len(xmls_list) > 0:
         .option('query',"""
                           SELECT 
                             ESTAB.*,
-                            EST.COD_ESTADO AS U
+                            EST.COD_ESTADO AS UF
                           FROM MSAF.ESTABELECIMENTO ESTAB
                           JOIN ESTADO EST ON 1=1
                             AND ESTAB.IDENT_ESTADO = EST.IDENT_ESTADO

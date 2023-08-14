@@ -57,7 +57,7 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO,
             '2' AS IND_TP_FRETE,
             COALESCE(X04_PARAM.UF,X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
-            NVL(EST.COD_ESTADO,NFe.infNfe.ide.UFFim) AS UF_DESTINO,
+            NVL(estab_dest.UF,NFe.infNfe.ide.UFFim) AS UF_DESTINO,
             NVL(X04_PARAM.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
             NVL(estab_dest.cod_municipio,SUBSTR(NFe.infNfe.ide.cMunFim,3,5)) AS COD_MUNICIPIO_DEST,
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP
@@ -73,8 +73,6 @@ class xmlToOracle:
                     OR
                     NFe.infNfe.ide.mod = '55'
                 )
-        LEFT JOIN ESTADO EST ON 1=1
-            AND EST.IDENT_ESTADO = estab_dest.IDENT_ESTADO
         LEFT JOIN ESTABELECIMENTO estab_rem ON 1=1
             AND estab_rem.CGC = NFe.infNfe.rem.CNPJ
             AND estab_rem.COD_ESTAB LIKE 'BR%'
