@@ -107,6 +107,7 @@ class xmlToOracle:
                 COD_EMPRESA,
                 COD_ESTAB,
                 NUM_DOCFIS,
+                COD_FIS_JUR,
                 SUM(BASE_IPI)/100 AS BASE_IPI,
                 SUM(CASE TRIB_ICMS WHEN '3' THEN BASE_ICMS ELSE 0 END)/100 AS BASE_OUTR_ICMS,
                 SUM(CASE TRIB_ICMS WHEN '2' THEN BASE_ICMS ELSE 0 END)/100 AS BASE_ISEN_ICMS
