@@ -13,12 +13,7 @@ class xmlToOracle:
                 ELSE 'YJ'
             END AS COD_DOCTO,
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
-            NVL(MSAFCNPJ.COD_FIS_JUR,NVL(X04.COD_FIS_JUR,(CASE 
-                WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
-                    'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,8) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
-                ELSE
-                    'M'||SUBSTR(NFe.infNfe.emit.CPF,1,8) || SUBSTR(NFe.infNfe.emit.CPF,-4)
-                END))) AS COD_FIS_JUR,
+            XI.COD_FIS_JUR,
             LPAD(NVL(NFe.infNfe.ide.nNF,NFe.infNfe.ide.nCT),9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             DATE_FORMAT(SUBSTR(NFe.infNfe.ide.dhEmi,1,10),'yyyyMMdd') AS DATA_EMISSAO,
@@ -237,12 +232,12 @@ class xmlToOracle:
             '1' AS NORM_DEV,
             'NFE' AS COD_DOCTO,
             NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
-            NVL(X04.COD_FIS_JUR,(CASE 
+            NVL(MSAFCNPJ.COD_FIS_JUR,NVL(X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
                     'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,8) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
                 ELSE
                     'M'||SUBSTR(NFe.infNfe.emit.CPF,1,8) || SUBSTR(NFe.infNfe.emit.CPF,-4)
-                END)) AS COD_FIS_JUR,
+                END))) AS COD_FIS_JUR,
             LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             '8' AS IND_PRODUTO,
@@ -333,6 +328,8 @@ class xmlToOracle:
             AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND XML_RAW_ITEM.col.prod.CFOP = MSAFCFOP.cod_cfo
+        LEFT JOIN MSAFCNPJ ON 1=1
+            AND NFe.infNfe.dest.CNPJ = MSAFCNPJ.CNPJ
         LEFT JOIN MSAFNCM ON 1=1
             AND XML_RAW_ITEM.col.prod.NCM = MSAFNCM.cod_ncm
         WHERE 1=1
