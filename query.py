@@ -51,9 +51,9 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
             LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO,
             '2' AS IND_TP_FRETE,
-            COALESCE(X04_PARAM.UF,X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
+            COALESCE(X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
             NVL(estab_dest.UF,NFe.infNfe.ide.UFFim) AS UF_DESTINO,
-            NVL(X04_PARAM.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
+            NVL(X04.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
             NVL(estab_dest.cod_municipio,SUBSTR(NFe.infNfe.ide.cMunFim,3,5)) AS COD_MUNICIPIO_DEST,
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP
         FROM XML_RAW_CAPA
@@ -98,10 +98,6 @@ class xmlToOracle:
             AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NVL(NFe.infNfe.det[0].prod.CFOP,NFe.infNfe.ide.CFOP) = MSAFCFOP.cod_cfo
-        LEFT JOIN MSAFCNPJ ON 1=1
-            AND NFe.infNfe.dest.CNPJ = MSAFCNPJ.CNPJ
-        LEFT JOIN X04_PESSOA_FIS_JUR X04_PARAM ON 1=1
-            AND MSAFCNPJ.COD_FIS_JUR = X04_PARAM.COD_FIS_JUR
         LEFT JOIN (
             SELECT 
                 COD_EMPRESA,
