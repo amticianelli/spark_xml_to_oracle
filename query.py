@@ -12,7 +12,7 @@ class xmlToOracle:
                 WHEN NFe.infNfe.ide.mod = '57' THEN 'YD'
                 ELSE 'YJ'
             END AS COD_DOCTO,
-            NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
+            XI.IDENT_FIS_JUR,
             XI.COD_FIS_JUR,
             LPAD(NVL(NFe.infNfe.ide.nNF,NFe.infNfe.ide.nCT),9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
@@ -104,6 +104,7 @@ class xmlToOracle:
                 COD_ESTAB,
                 NUM_DOCFIS,
                 COD_FIS_JUR,
+                IDENT_FIS_JUR,
                 SUM(BASE_IPI)/100 AS BASE_IPI,
                 SUM(CASE TRIB_ICMS WHEN '3' THEN BASE_ICMS ELSE 0 END)/100 AS BASE_OUTR_ICMS,
                 SUM(CASE TRIB_ICMS WHEN '2' THEN BASE_ICMS ELSE 0 END)/100 AS BASE_ISEN_ICMS
@@ -112,7 +113,8 @@ class xmlToOracle:
                 COD_EMPRESA,
                 COD_ESTAB,
                 NUM_DOCFIS,
-                COD_FIS_JUR
+                COD_FIS_JUR,
+                IDENT_FIS_JUR
         ) XI ON 1=1
             AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA)
             AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB)
@@ -229,13 +231,13 @@ class xmlToOracle:
             '1' AS MOVTO_E_S,
             '1' AS NORM_DEV,
             'NFE' AS COD_DOCTO,
-            NVL(X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
-            NVL(MSAFCNPJ.COD_FIS_JUR,NVL(X04.COD_FIS_JUR,(CASE 
+            coalesce(X04_PARAM.IND_FIS_JUR,X04.IND_FIS_JUR,'1') AS IDENT_FIS_JUR,
+            coalesce(MSAFCNPJ.COD_FIS_JUR, X04.COD_FIS_JUR,(CASE 
                 WHEN NFe.infNfe.emit.CNPJ IS NOT NULL THEN
                     'M'||SUBSTR(NFe.infNfe.emit.CNPJ,1,8) || SUBSTR(NFe.infNfe.emit.CNPJ,-4)
                 ELSE
                     'M'||SUBSTR(NFe.infNfe.emit.CPF,1,8) || SUBSTR(NFe.infNfe.emit.CPF,-4)
-                END))) AS COD_FIS_JUR,
+                END)) AS COD_FIS_JUR,
             LPAD(NFe.infNfe.ide.nNF,9,'0') AS NUM_DOCFIS,
             NFe.infNfe.ide.serie AS SERIE_DOCFIS,
             '8' AS IND_PRODUTO,
@@ -327,7 +329,9 @@ class xmlToOracle:
         LEFT JOIN MSAFCFOP ON 1=1
             AND XML_RAW_ITEM.col.prod.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFCNPJ ON 1=1
-            AND NFe.infNfe.dest.CNPJ = MSAFCNPJ.CNPJ
+            AND NFe.infNfe.emit.CNPJ = MSAFCNPJ.CNPJ
+        LEFT JOIN X04_PESSOA_FIS_JUR X04_PARAM ON 1=1
+            AND X04_PARAM.COD_FIS_JUR = MSAFCNPJ.COD_FIS_JUR
         LEFT JOIN MSAFNCM ON 1=1
             AND XML_RAW_ITEM.col.prod.NCM = MSAFNCM.cod_ncm
         WHERE 1=1
