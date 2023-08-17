@@ -286,6 +286,29 @@ if len(xmls_list) > 0:
                         """) \
         .load() \
         .cache()
+    
+    # X04 usada para parametro custom
+    df_x04_param = spark.read \
+        .format("jdbc") \
+        .option('driver',driver) \
+        .option('url',jdbc_string) \
+        .option('user',user) \
+        .option('password',password) \
+        .option("fetchsize","500")  \
+        .option('query',"""
+                          WITH v1 AS (
+                          SELECT 
+                            x04.*,
+                            EST.COD_ESTADO AS UF,
+                            RANK() OVER(PARTITION BY COD_FIS_JUR ORDER BY VALID_FIS_JUR DESC,IND_FIS_JUR, IDENT_FIS_JUR DESC) AS POSICAO
+                          FROM MSAF.X04_PESSOA_FIS_JUR x04
+                          JOIN MSAF.ESTADO EST ON 1=1
+                            AND x04.IDENT_ESTADO = EST.IDENT_ESTADO
+                          )
+                          SELECT * FROM v1 WHERE POSICAO = 1
+                        """) \
+        .load() \
+        .cache()
 
     # Returning CFOP
 
@@ -379,6 +402,7 @@ if len(xmls_list) > 0:
 
     # Visao de pessoa fisica juridica
     df_x04.createOrReplaceTempView('X04_PESSOA_FIS_JUR')
+    df_x04_param.createOrReplaceTempView('X04_PARAM')
     
 
     # Visao de item

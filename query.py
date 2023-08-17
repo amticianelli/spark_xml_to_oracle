@@ -330,7 +330,7 @@ class xmlToOracle:
             AND XML_RAW_ITEM.col.prod.CFOP = MSAFCFOP.cod_cfo
         LEFT JOIN MSAFCNPJ ON 1=1
             AND NFe.infNfe.emit.CNPJ = MSAFCNPJ.CNPJ
-        LEFT JOIN X04_PESSOA_FIS_JUR X04_PARAM ON 1=1
+        LEFT JOIN X04_PARAM ON 1=1
             AND X04_PARAM.COD_FIS_JUR = MSAFCNPJ.COD_FIS_JUR
         LEFT JOIN MSAFNCM ON 1=1
             AND XML_RAW_ITEM.col.prod.NCM = MSAFNCM.cod_ncm
