@@ -51,14 +51,16 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
             LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO,
             '2' AS IND_TP_FRETE,
-            COALESCE(X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
+            COALESCE(X04_PARAM.UF,X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
             NVL(estab_dest.UF,NFe.infNfe.ide.UFFim) AS UF_DESTINO,
-            NVL(X04.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
+            COALESCE(X04_PARAM.COD_MUNICIPIO,X04.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
             NVL(estab_dest.cod_municipio,SUBSTR(NFe.infNfe.ide.cMunFim,3,5)) AS COD_MUNICIPIO_DEST,
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
+        LEFT JOIN X04_PARAM ON 1=1
+            AND X04_PARAM.COD_FIS_JUR = XI.COD_FIS_JUR
         LEFT JOIN ESTABELECIMENTO estab_dest ON 1=1
             AND estab_dest.CGC = NFe.infNfe.dest.CNPJ
             AND estab_dest.COD_ESTAB LIKE 'BR%'
