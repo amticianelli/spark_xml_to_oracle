@@ -59,8 +59,6 @@ class xmlToOracle:
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
             AND LPAD(NVL(NFe.infNfe.emit.CNPJ,NFe.infNfe.emit.CPF),14,'0') = LPAD(X04.CPF_CGC,14,'0')
-        LEFT JOIN X04_PARAM ON 1=1
-            AND X04_PARAM.COD_FIS_JUR = XI.COD_FIS_JUR
         LEFT JOIN ESTABELECIMENTO estab_dest ON 1=1
             AND estab_dest.CGC = NFe.infNfe.dest.CNPJ
             AND estab_dest.COD_ESTAB LIKE 'BR%'
@@ -121,6 +119,8 @@ class xmlToOracle:
             AND XI.COD_EMPRESA = coalesce(estab_dest.COD_EMPRESA,estab_toma.COD_EMPRESA,estab_rem.COD_EMPRESA,estab_exped.COD_EMPRESA,estab_receb.COD_EMPRESA)
             AND XI.COD_ESTAB = coalesce(estab_dest.COD_ESTAB,estab_toma.COD_ESTAB,estab_rem.COD_ESTAB,estab_exped.COD_ESTAB,estab_receb.COD_ESTAB)
             AND XI.NUM_DOCFIS = LPAD(NVL(NFe.infNfe.ide.nNF,NFe.infNfe.ide.nCT),9,'0')
+        LEFT JOIN X04_PARAM ON 1=1
+            AND X04_PARAM.COD_FIS_JUR = XI.COD_FIS_JUR
         WHERE 1=1
     """
 
