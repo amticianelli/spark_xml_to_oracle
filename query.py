@@ -51,10 +51,10 @@ class xmlToOracle:
             LPAD(REPLACE(REPLACE(FORMAT_NUMBER(setTagAvulsa(NFe.infNfe.emit.CPF,NFe.infNfe.emit.IE,NFe.infNfe.total.ICMSTot.vDesc),2),'.'),','),17,'0') AS VLR_DESCONTO,
             LPAD(REPLACE(REPLACE(NFe.infNfe.total.ICMSTot.vDesc,'.'),','),17,'0') AS VLR_ABAT_NTRIBUTADO,
             '2' AS IND_TP_FRETE,
-            COALESCE(X04_PARAM.UF,X04.UF,NFe.infNfe.ide.UFIni) AS UF_ORIG_DEST,
-            NVL(estab_dest.UF,NFe.infNfe.ide.UFFim) AS UF_DESTINO,
-            COALESCE(X04_PARAM.COD_MUNICIPIO,X04.COD_MUNICIPIO,SUBSTR(NFe.infNfe.ide.cMunIni,3,5)) AS COD_MUNICIPIO_ORIG,
-            NVL(estab_dest.cod_municipio,SUBSTR(NFe.infNfe.ide.cMunFim,3,5)) AS COD_MUNICIPIO_DEST,
+            COALESCE(NFe.infNfe.ide.UFIni,X04_PARAM.UF,X04.UF) AS UF_ORIG_DEST,
+            NVL(NFe.infNfe.ide.UFFim,estab_dest.UF) AS UF_DESTINO,
+            COALESCE(SUBSTR(NFe.infNfe.ide.cMunIni,3,5),X04_PARAM.COD_MUNICIPIO,X04.COD_MUNICIPIO) AS COD_MUNICIPIO_ORIG,
+            NVL(SUBSTR(NFe.infNfe.ide.cMunFim,3,5),estab_dest.cod_municipio) AS COD_MUNICIPIO_DEST,
             NVL(MSAFCFOP.novo_natop,'NP') AS COD_NATUREZA_OP
         FROM XML_RAW_CAPA
         LEFT JOIN X04_PESSOA_FIS_JUR X04 ON 1=1
