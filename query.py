@@ -98,6 +98,8 @@ class xmlToOracle:
             AND NFe.infNfe.ide.toma3.toma = '2'
         LEFT JOIN MSAFCFOP ON 1=1
             AND NVL(NFe.infNfe.det[0].prod.CFOP,NFe.infNfe.ide.CFOP) = MSAFCFOP.cod_cfo
+        LEFT JOIN MSAFCNPJ ON 1=1
+            AND NFe.infNfe.emit.CNPJ = MSAFCNPJ.CNPJ
         LEFT JOIN (
             SELECT 
                 COD_EMPRESA,
